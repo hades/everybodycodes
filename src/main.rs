@@ -45,7 +45,12 @@ fn main() {
             _ => panic!("part should be in [1,2,3], got {}", args.part),
         },
     };
-    log::info!("solving Everybody Codes event {} quest {} part {}", args.event, args.quest, args.part);
+    log::info!(
+        "solving Everybody Codes event {} quest {} part {}",
+        args.event,
+        args.quest,
+        args.part
+    );
     log::info!("retrieving puzzle input...");
     match client.get_puzzle_input(&key) {
         Ok(input) => {

@@ -34,11 +34,16 @@ pub fn solve_part_1(input: &str) -> String {
     for round in 0..10 {
         simulate_one_round(&mut columns, round);
     }
-    columns.iter().map(|c| c[0].to_string()).collect::<Vec<String>>().join("").to_string()
+    columns
+        .iter()
+        .map(|c| c[0].to_string())
+        .collect::<Vec<String>>()
+        .join("")
+        .to_string()
 }
 
 fn merge_numbers(a: usize, b: usize) -> usize {
-    let mut factor  = 10;
+    let mut factor = 10;
     while factor <= b {
         factor *= 10;
     }
@@ -51,7 +56,9 @@ pub fn solve_part_2(input: &str) -> String {
     let mut round = 0;
     loop {
         simulate_one_round(&mut columns, round);
-        let number = columns.iter().fold(0, |res, column| merge_numbers(res, column[0]));
+        let number = columns
+            .iter()
+            .fold(0, |res, column| merge_numbers(res, column[0]));
         let mut count = *number_counts.get(&number).or(Some(&0)).unwrap();
         count += 1;
         if count == 2024 {
@@ -69,8 +76,12 @@ pub fn solve_part_3(input: &str) -> String {
     let mut max: usize = 0;
     loop {
         simulate_one_round(&mut columns, round);
-        let number = columns.iter().fold(0, |res, column| merge_numbers(res, column[0]));
-        if max < number { max = number; }
+        let number = columns
+            .iter()
+            .fold(0, |res, column| merge_numbers(res, column[0]));
+        if max < number {
+            max = number;
+        }
         if states.contains(&columns) {
             break;
         }
@@ -83,21 +94,31 @@ pub fn solve_part_3(input: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     use test_log::test;
 
     #[test]
     fn test_solve_part_1() {
-        assert_eq!("2323", solve_part_1("2 3 4 5
+        assert_eq!(
+            "2323",
+            solve_part_1(
+                "2 3 4 5
 3 4 5 2
 4 5 2 3
-5 2 3 4"));
+5 2 3 4"
+            )
+        );
     }
 
     #[test]
     fn test_solve_part_2() {
-        assert_eq!("50877075", solve_part_2("2 3 4 5
-6 7 8 9"));
+        assert_eq!(
+            "50877075",
+            solve_part_2(
+                "2 3 4 5
+6 7 8 9"
+            )
+        );
     }
 
     #[test]
@@ -151,7 +172,12 @@ mod tests {
 
     #[test]
     fn test_solve_part_3() {
-        assert_eq!("6584", solve_part_3("2 3 4 5
-6 7 8 9"));
+        assert_eq!(
+            "6584",
+            solve_part_3(
+                "2 3 4 5
+6 7 8 9"
+            )
+        );
     }
 }

@@ -5,16 +5,16 @@ use std::sync::Arc;
 use std::sync::RwLock;
 use std::time::Instant;
 
+use aes::cipher::BlockDecryptMut;
+use aes::cipher::KeyIvInit;
 use aes::cipher::block_padding::Pkcs7;
 use aes::cipher::block_padding::UnpadError;
 use aes::cipher::generic_array::GenericArray;
-use aes::cipher::BlockDecryptMut;
-use aes::cipher::KeyIvInit;
 use hex::FromHexError;
 use http::HeaderValue;
 use log::debug;
-use reqwest::blocking::Client;
 use reqwest::Url;
+use reqwest::blocking::Client;
 use serde::Deserialize;
 use typenum::U16;
 use typenum::U32;
@@ -46,13 +46,15 @@ impl reqwest::cookie::CookieStore for EcSessionCookieStore {
                 debug!("EC cookie has not been set");
                 None
             }
-            Some(cookie) => match HeaderValue::from_str(format!("everybody-codes={cookie}").as_str()) {
-                Ok(hv) => Some(hv),
-                Err(e) => {
-                    debug!("failed to create HeaderValue from cookie string: {e}");
-                    None
+            Some(cookie) => {
+                match HeaderValue::from_str(format!("everybody-codes={cookie}").as_str()) {
+                    Ok(hv) => Some(hv),
+                    Err(e) => {
+                        debug!("failed to create HeaderValue from cookie string: {e}");
+                        None
+                    }
                 }
-            },
+            }
         }
     }
 }
@@ -103,7 +105,7 @@ impl From<FromUtf8Error> for Error {
 }
 
 impl From<UnpadError> for Error {
-    fn from(e:UnpadError) -> Error {
+    fn from(e: UnpadError) -> Error {
         Error::UnpadError(e)
     }
 }
@@ -150,7 +152,11 @@ fn get_me(base_url: &str, client: &Client) -> Result<UserInfoResponse, Error> {
 }
 
 impl EcClient {
-    pub fn new_with_base(base_url: &str, base_cdn_url: &str, cookie: &str) -> Result<EcClient, Error> {
+    pub fn new_with_base(
+        base_url: &str,
+        base_cdn_url: &str,
+        cookie: &str,
+    ) -> Result<EcClient, Error> {
         // We need to use an Arc here because reqwest::ClientBuilder requires an
         // Arc<C> of CookieStore:
         // https://docs.rs/reqwest/latest/reqwest/blocking/struct.ClientBuilder.html
@@ -172,11 +178,18 @@ impl EcClient {
     }
 
     pub fn new(cookie: &str) -> Result<EcClient, Error> {
-        Self::new_with_base("https://everybody.codes/", "https://everybody-codes.b-cdn.net/", cookie)
+        Self::new_with_base(
+            "https://everybody.codes/",
+            "https://everybody-codes.b-cdn.net/",
+            cookie,
+        )
     }
 
     fn get_encryption_key(&self, key: &PuzzleKey) -> Result<KeyResponse, Error> {
-        let url = format!("{}api/event/{}/quest/{}", self.base_url, key.event, key.quest);
+        let url = format!(
+            "{}api/event/{}/quest/{}",
+            self.base_url, key.event, key.quest
+        );
         let response: KeyResponse = self.client.get(url).send()?.json()?;
         Ok(response)
     }
@@ -187,11 +200,15 @@ impl EcClient {
             Part::One => keys.key1,
             Part::Two => keys.key2,
             Part::Three => keys.key3,
-        }.ok_or(Error::KeyNotYetAvailable)?;
+        }
+        .ok_or(Error::KeyNotYetAvailable)?;
         let aes_key = GenericArray::<u8, U32>::clone_from_slice(aes.as_bytes());
         let aes_iv = GenericArray::<u8, U16>::clone_from_slice(&aes.as_bytes()[..16]);
         let cipher = cbc::Decryptor::<aes::Aes256>::new(&aes_key, &aes_iv);
-        let url = format!("{}assets/{}/{}/input/{}.json", self.base_cdn_url, key.event, key.quest, self.seed);
+        let url = format!(
+            "{}assets/{}/{}/input/{}.json",
+            self.base_cdn_url, key.event, key.quest, self.seed
+        );
         let response: PuzzleInputResponse = self.client.get(url).send()?.json()?;
         let encrypted_text = match key.part {
             Part::One => &response.part_one_encrypted,
@@ -202,13 +219,17 @@ impl EcClient {
         let mut buf = Vec::new();
         buf.resize(encrypted_text.len() / 2, 0);
         hex::decode_to_slice(&encrypted_text, buf.as_mut_slice())?;
-        let result = String::from_utf8(cipher.decrypt_padded_vec_mut::<Pkcs7>(buf.as_mut_slice())?)?;
+        let result =
+            String::from_utf8(cipher.decrypt_padded_vec_mut::<Pkcs7>(buf.as_mut_slice())?)?;
         Ok(result)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use httptest::Expectation;
+    use httptest::Server;
+    use httptest::ServerPool;
     use httptest::matchers::all_of;
     use httptest::matchers::contains;
     use httptest::matchers::eq;
@@ -216,9 +237,6 @@ mod tests {
     use httptest::matchers::matches;
     use httptest::matchers::request;
     use httptest::responders::status_code;
-    use httptest::Expectation;
-    use httptest::Server;
-    use httptest::ServerPool;
 
     use super::*;
 
@@ -243,7 +261,8 @@ mod tests {
     fn make_client(server: &Server) -> EcClient {
         let base_url = server_url(&server);
         let base_cdn_url = format!("{}{}", server_url(&server), "_cdn/");
-        EcClient::new_with_base(base_url.as_str(), base_cdn_url.as_str(), "deadbeef").expect("creating EC client")
+        EcClient::new_with_base(base_url.as_str(), base_cdn_url.as_str(), "deadbeef")
+            .expect("creating EC client")
     }
 
     #[test]
@@ -267,13 +286,12 @@ mod tests {
         ));
         let client = make_client(&server);
         matches!(
-            client
-                .get_puzzle_input(&PuzzleKey {
-                    event: 2024,
-                    quest: 5,
-                    part: Part::Two
-                }),
-                Err(Error::KeyNotYetAvailable)
+            client.get_puzzle_input(&PuzzleKey {
+                event: 2024,
+                quest: 5,
+                part: Part::Two
+            }),
+            Err(Error::KeyNotYetAvailable)
         );
     }
 
@@ -300,8 +318,17 @@ mod tests {
                 "3": "2ae06416829972cd3a095a35961d746471867b81e5652c50e90d0ebbdc01ad1b7b863757e385f2c6bb6c5ead02692d15"
         }"#)));
         let client = make_client(&server);
-        assert_eq!("Hello, I'm your input too.
+        assert_eq!(
+            "Hello, I'm your input too.
 
-Wowzers.", client.get_puzzle_input(&PuzzleKey { event: 2024, quest: 5, part: Part::Two }).unwrap());
+Wowzers.",
+            client
+                .get_puzzle_input(&PuzzleKey {
+                    event: 2024,
+                    quest: 5,
+                    part: Part::Two
+                })
+                .unwrap()
+        );
     }
 }
