@@ -254,6 +254,30 @@ mod tests {
     }
 
     #[test]
+    fn test_get_puzzle_input_key_not_available() {
+        let server = SERVER_POOL.get_server();
+        set_base_expect(&server);
+        let m = all_of![
+            request::method("GET"),
+            request::path(matches("/api/event/2024/quest/5")),
+            request::headers(contains(("cookie", "everybody-codes=deadbeef"))),
+        ];
+        server.expect(Expectation::matching(m).respond_with(
+            status_code(200).body(r#"{"key1": "AwAwAwAwAwAwAwAwAwAwAwAwAwAwAwA="}"#),
+        ));
+        let client = make_client(&server);
+        matches!(
+            client
+                .get_puzzle_input(&PuzzleKey {
+                    event: 2024,
+                    quest: 5,
+                    part: Part::Two
+                }),
+                Err(Error::KeyNotYetAvailable)
+        );
+    }
+
+    #[test]
     fn test_get_puzzle_input() {
         let server = SERVER_POOL.get_server();
         set_base_expect(&server);
@@ -262,9 +286,9 @@ mod tests {
             request::path(matches("/api/event/2024/quest/5")),
             request::headers(contains(("cookie", "everybody-codes=deadbeef"))),
         ];
-        server.expect(Expectation::matching(m).respond_with(status_code(200).body(
-            r#"{"key1": "AwAwAwAwAwAwAwAwAwAwAwAwAwAwAwA="}"#
-        )));
+        server.expect(Expectation::matching(m).respond_with(
+            status_code(200).body(r#"{"key2": "AwAwAwAwAwAwAwAwAwAwAwAwAwAwAwA="}"#),
+        ));
         let m = all_of![
             request::method("GET"),
             request::path(matches("/_cdn/assets/2024/5/input/7.json")),
