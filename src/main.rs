@@ -161,6 +161,11 @@ fn main() {
             log::info!("solving...");
             let solution = solver(input.as_str());
             log::info!("solution: {}", solution);
+            if args.submit {
+                log::info!("submitting the answer...");
+                let result = client.post_answer(&key, solution.as_str());
+                log::info!("result: {:#?}", result);
+            }
         }
         Err(e) => {
             log::error!("error retrieving puzzle input: {e:#?}");
