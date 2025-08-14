@@ -421,6 +421,7 @@ dependencies = [
  "test-log",
  "trie-rs",
  "typenum",
+ "url",
 ]
 
 [[package]]
