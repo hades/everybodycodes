@@ -16,7 +16,9 @@ pub fn solve_part_1(input: &str) -> String {
     potions.to_string()
 }
 
-pub fn is_monster(ch: char) -> bool { ch != 'x' }
+pub fn is_monster(ch: char) -> bool {
+    ch != 'x'
+}
 
 pub fn solve_part_2(input: &str) -> String {
     let mut total_potions: i64 = 0;
@@ -53,15 +55,16 @@ pub fn solve_part_3(input: &str) -> String {
         let monster2 = monster2.unwrap();
         let monster3 = monster3.unwrap();
         let potions = potions_for(monster1) + potions_for(monster2) + potions_for(monster3);
-        let monster_count = [monster1, monster2, monster3].iter().map(|m| {
-            if is_monster(*m) { 1 }
-            else { 0 }
-        }).sum();
-        total_potions += potions + match monster_count {
-            3 => 6,
-            2 => 2,
-            _ => 0,
-        };
+        let monster_count = [monster1, monster2, monster3]
+            .iter()
+            .map(|m| if is_monster(*m) { 1 } else { 0 })
+            .sum();
+        total_potions += potions
+            + match monster_count {
+                3 => 6,
+                2 => 2,
+                _ => 0,
+            };
         debug!("{monster1}{monster2} {total_potions}");
     }
     total_potions.to_string()
@@ -70,7 +73,7 @@ pub fn solve_part_3(input: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     use test_log::test;
 
     #[test]
