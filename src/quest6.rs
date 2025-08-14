@@ -1,10 +1,8 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-use log::debug;
 use petgraph::{
-    Graph,
-    visit::{DfsEvent::TreeEdge, depth_first_search},
+    visit::{depth_first_search, Control, DfsEvent::TreeEdge}, Graph
 };
 
 pub fn solve_part_1(input: &str) -> String {
@@ -23,7 +21,6 @@ pub fn solve_part_1(input: &str) -> String {
         node_to_idx.insert(node.0, graph.add_node(node.0));
     });
     nodes.iter().for_each(|node| {
-        debug!("{:?}", node);
         node.1.iter().for_each(|to_node| {
             let to_node_idx = match *to_node {
                 "@" => graph.add_node("@"),
@@ -79,7 +76,6 @@ pub fn solve_part_2(input: &str) -> String {
         node_to_idx.insert(node.0, graph.add_node(node.0));
     });
     nodes.iter().for_each(|node| {
-        debug!("{:?}", node);
         node.1.iter().for_each(|to_node| {
             let to_node_idx = match *to_node {
                 "@" => graph.add_node("@"),
@@ -98,11 +94,16 @@ pub fn solve_part_2(input: &str) -> String {
     let mut node_paths = HashMap::new();
     node_paths.insert(node_to_idx["RR"], vec!["RR".to_string()]);
     depth_first_search(&graph, [node_to_idx["RR"]], |event| {
+        let mut prune = false;
         if let TreeEdge(from, to) = event {
             let mut path = node_paths[&from].clone();
             path.push(graph[to].to_string());
             node_paths.insert(to, path);
+            if graph[to] == "BUG" || graph[to] == "ANT" {
+                prune = true;
+            }
         }
+        if prune { Control::<()>::Prune } else { Control::Continue }
     });
     let unique_len = node_paths
         .iter()
@@ -124,7 +125,7 @@ pub fn solve_part_2(input: &str) -> String {
 }
 
 pub fn solve_part_3(input: &str) -> String {
-    "".to_string()
+    solve_part_2(input)
 }
 
 #[cfg(test)]
