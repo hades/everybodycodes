@@ -162,9 +162,13 @@ fn main() {
             let solution = solver(input.as_str());
             log::info!("solution: {}", solution);
             if args.submit {
-                log::info!("submitting the answer...");
-                let result = client.post_answer(&key, solution.as_str());
-                log::info!("result: {:#?}", result);
+                if solution.is_empty() {
+                    log::warn!("refusing to submit an empty solution");
+                } else {
+                    log::info!("submitting the answer...");
+                    let result = client.post_answer(&key, solution.as_str());
+                    log::info!("result: {:#?}", result);
+                }
             }
         }
         Err(e) => {
