@@ -135,7 +135,6 @@ impl From<url::ParseError> for Error {
 pub struct EcClient {
     base_url: String,
     base_cdn_url: String,
-    cookie_store: Arc<EcSessionCookieStore>,
     client: reqwest::blocking::Client,
     penalty_until: Option<Instant>,
     seed: i64,
@@ -194,7 +193,6 @@ impl EcClient {
         Ok(EcClient {
             base_url: String::from(base_url),
             base_cdn_url: String::from(base_cdn_url),
-            cookie_store,
             client,
             penalty_until: None,
             seed: me.seed,
