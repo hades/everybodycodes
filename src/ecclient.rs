@@ -17,6 +17,7 @@ use http::HeaderValue;
 use log::debug;
 use reqwest::Url;
 use reqwest::blocking::Client;
+use serde::de;
 use serde::Deserialize;
 use serde::Serialize;
 use typenum::U16;
@@ -148,7 +149,7 @@ struct UserInfoResponse {
     #[serde(rename = "penaltyUntil")]
     penalty_until_ms: i64,
     #[serde(rename = "serverTime")]
-    server_time: i64,
+    server_time_ms: i64,
     seed: i64,
 }
 
@@ -289,6 +290,14 @@ impl EcClient {
         };
         Ok(self.client.post(url).json(&request).send()?.json()?)
     }
+
+    pub fn get_penalty_delay(&self) -> Result<Option<Duration>, Error> {
+        let me = get_me(&self.base_url, &self.client)?;
+        match me.penalty_until_ms - me.server_time_ms {
+            ..=0 => Ok(None),
+            delay_ms => Ok(Some(Duration::from_millis(delay_ms as u64))),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -303,7 +312,6 @@ mod tests {
     use httptest::matchers::matches;
     use httptest::matchers::not;
     use httptest::matchers::request;
-    use httptest::responders::json_encoded;
     use httptest::responders::status_code;
 
     use super::*;

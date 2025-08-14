@@ -8,6 +8,7 @@ mod quest6;
 mod types;
 
 use std::env;
+use std::thread;
 
 use clap::Parser;
 use types::Part;
@@ -165,6 +166,10 @@ fn main() {
                 if solution.is_empty() {
                     log::warn!("refusing to submit an empty solution");
                 } else {
+                    if let Some(delay) = client.get_penalty_delay().unwrap() {
+                        log::info!("sleeping for {:?} before submitting...", &delay);
+                        thread::sleep(delay);
+                    }
                     log::info!("submitting the answer...");
                     let result = client.post_answer(&key, solution.as_str());
                     log::info!("result: {:#?}", result);
