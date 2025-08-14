@@ -4,6 +4,7 @@ mod quest2;
 mod quest3;
 mod quest4;
 mod quest5;
+mod quest6;
 mod types;
 
 use std::env;
@@ -103,6 +104,21 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
             quest: 5,
             part: Part::Three,
         } => Box::new(quest5::solve_part_3),
+        PuzzleKey {
+            event: 2024,
+            quest: 6,
+            part: Part::One,
+        } => Box::new(quest6::solve_part_1),
+        PuzzleKey {
+            event: 2024,
+            quest: 6,
+            part: Part::Two,
+        } => Box::new(quest6::solve_part_2),
+        PuzzleKey {
+            event: 2024,
+            quest: 6,
+            part: Part::Three,
+        } => Box::new(quest6::solve_part_3),
         _ => panic!("solver not found for {:?}", puzzle_key),
     }
 }
