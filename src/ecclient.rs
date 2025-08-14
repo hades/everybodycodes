@@ -296,6 +296,8 @@ impl EcClient {
 
 #[cfg(test)]
 mod tests {
+    use std::time::UNIX_EPOCH;
+
     use httptest::Expectation;
     use httptest::Server;
     use httptest::ServerPool;
