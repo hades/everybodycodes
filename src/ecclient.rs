@@ -14,7 +14,7 @@ use aes::cipher::block_padding::UnpadError;
 use aes::cipher::generic_array::GenericArray;
 use hex::FromHexError;
 use http::HeaderValue;
-use log::debug;
+use log::error;
 use reqwest::Url;
 use reqwest::blocking::Client;
 use serde::de;
@@ -61,7 +61,7 @@ impl reqwest::cookie::CookieStore for EcSessionCookieStore {
         ) {
             Ok(hv) => Some(hv),
             Err(e) => {
-                debug!("failed to create HeaderValue from cookie string: {e}");
+                error!("failed to create HeaderValue from cookie string: {e}");
                 None
             }
         }
@@ -268,7 +268,6 @@ impl EcClient {
             Part::Two => &response.part_two_encrypted,
             Part::Three => &response.part_three_encrypted,
         };
-        debug!("encrypted text: {}", encrypted_text);
         let mut buf = Vec::new();
         buf.resize(encrypted_text.len() / 2, 0);
         hex::decode_to_slice(&encrypted_text, buf.as_mut_slice())?;

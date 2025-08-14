@@ -1,5 +1,3 @@
-use log::debug;
-
 fn potions_for(monster: char) -> i64 {
     match monster {
         'A' => 0,
@@ -36,7 +34,6 @@ pub fn solve_part_2(input: &str) -> String {
             potions += 2;
         }
         total_potions += potions;
-        debug!("{monster1}{monster2} {total_potions}");
     }
     total_potions.to_string()
 }
@@ -65,7 +62,6 @@ pub fn solve_part_3(input: &str) -> String {
                 2 => 2,
                 _ => 0,
             };
-        debug!("{monster1}{monster2} {total_potions}");
     }
     total_potions.to_string()
 }

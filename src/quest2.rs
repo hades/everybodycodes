@@ -6,7 +6,6 @@ use interval::interval_set::ToIntervalSet;
 use interval::prelude::Bounded;
 use interval::prelude::Empty;
 use interval::prelude::Union;
-use log::debug;
 use trie_rs::Trie;
 use trie_rs::TrieBuilder;
 use trie_rs::inc_search::Answer;
@@ -60,7 +59,6 @@ where
     let mut result_matching = vec![];
     let mut result_pending = vec![];
     while let Some(answer) = inc_search.query(&rune_lines[i][j]) {
-        debug!("{} {} {:?}", i, j, answer);
         match answer {
             Answer::Match | Answer::PrefixAndMatch => {
                 result_pending.push((i, j));
@@ -103,7 +101,6 @@ pub fn solve_part_3(input: &str) -> String {
     // Loop over every possible starting position of a word.
     for start_i in 0..rune_lines.len() {
         for start_j in 0..width {
-            debug!("{} {} {:?}", start_i, start_j, scales_with_runic_words);
             find_words_starting_at(&rune_lines, &words, start_i, start_j, |(i, j)| {
                 Some((i, (j + 1) % width))
             })
