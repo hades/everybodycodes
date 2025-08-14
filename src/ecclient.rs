@@ -18,6 +18,7 @@ use log::debug;
 use reqwest::Url;
 use reqwest::blocking::Client;
 use serde::Deserialize;
+use serde::Serialize;
 use typenum::U16;
 use typenum::U32;
 
@@ -168,6 +169,32 @@ struct PuzzleInputResponse {
     part_three_encrypted: String,
 }
 
+#[derive(Serialize)]
+struct AnswerRequest {
+    answer: String,
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
+pub struct AnswerResponse {
+    correct: bool,
+    #[serde(rename = "lengthCorrect")]
+    length_correct: bool,
+    #[serde(rename = "firstCorrect")]
+    first_correct: bool,
+    #[serde(with = "serde_millis")]
+    time: SystemTime,
+    #[serde(rename = "localTime")]
+    #[serde(with = "serde_millis")]
+    local_time: Duration,
+    #[serde(rename = "globalTime")]
+    #[serde(with = "serde_millis")]
+    global_time: Duration,
+    #[serde(rename = "globalPlace")]
+    global_place: i32,
+    #[serde(rename = "globalScore")]
+    global_score: i32,
+}
+
 fn get_me(base_url: &str, client: &Client) -> Result<UserInfoResponse, Error> {
     let url = format!("{}{}", base_url, "api/user/me");
     let response: UserInfoResponse = client.get(url).send()?.json()?;
@@ -196,7 +223,8 @@ impl EcClient {
             base_url: String::from(base_url),
             base_cdn_url: String::from(base_cdn_url),
             client,
-            penalty_until: UNIX_EPOCH.checked_add(Duration::from_millis(me.penalty_until_ms as u64)),
+            penalty_until: UNIX_EPOCH
+                .checked_add(Duration::from_millis(me.penalty_until_ms as u64)),
             seed: me.seed,
         })
     }
@@ -247,6 +275,20 @@ impl EcClient {
             String::from_utf8(cipher.decrypt_padded_vec_mut::<Pkcs7>(buf.as_mut_slice())?)?;
         Ok(result)
     }
+
+    pub fn post_answer(&self, key: &PuzzleKey, answer: &str) -> Result<AnswerResponse, Error> {
+        let url = format!(
+            "{}api/event/{}/quest/{}/part/{}/answer",
+            self.base_url,
+            key.event,
+            key.quest,
+            key.part.as_u8()
+        );
+        let request = AnswerRequest {
+            answer: answer.to_string(),
+        };
+        Ok(self.client.post(url).json(&request).send()?.json()?)
+    }
 }
 
 #[cfg(test)]
@@ -261,6 +303,7 @@ mod tests {
     use httptest::matchers::matches;
     use httptest::matchers::not;
     use httptest::matchers::request;
+    use httptest::responders::json_encoded;
     use httptest::responders::status_code;
 
     use super::*;
@@ -396,6 +439,48 @@ Wowzers.",
                     part: Part::Two
                 })
                 .unwrap()
+        );
+    }
+
+    #[test]
+    fn test_post_answer() {
+        let server = SERVER_POOL.get_server();
+        set_base_expect(&server);
+        let m = all_of![
+            request::method("POST"),
+            request::path(matches("/api/event/2024/quest/6/part/1/answer")),
+            request::headers(contains(("cookie", "everybody-codes=deadbeef"))),
+            request::body(json_decoded(eq(serde_json::json!({
+                "answer": "forty_two",
+            })))),
+        ];
+        server.expect(Expectation::matching(m).respond_with(
+            status_code(200).body(r#"{"correct":true,"lengthCorrect":true,"firstCorrect":false,"time":1755169141515,"localTime":79507010,"globalTime":23803141515,"globalPlace":797,"globalScore":0}"#)
+        ));
+
+        let client = make_client(&server);
+        let response = client
+            .post_answer(
+                &PuzzleKey {
+                    event: 2024,
+                    quest: 6,
+                    part: Part::One,
+                },
+                "forty_two",
+            )
+            .unwrap();
+        assert_eq!(
+            AnswerResponse {
+                correct: true,
+                length_correct: true,
+                first_correct: false,
+                time: UNIX_EPOCH + Duration::from_millis(1755169141515),
+                local_time: Duration::from_millis(79507010),
+                global_time: Duration::from_millis(23803141515),
+                global_place: 797,
+                global_score: 0,
+            },
+            response
         );
     }
 }
