@@ -3,7 +3,9 @@ use std::fmt;
 use std::string::FromUtf8Error;
 use std::sync::Arc;
 use std::sync::RwLock;
-use std::time::Instant;
+use std::time::Duration;
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
 
 use aes::cipher::BlockDecryptMut;
 use aes::cipher::KeyIvInit;
@@ -136,14 +138,14 @@ pub struct EcClient {
     base_url: String,
     base_cdn_url: String,
     client: reqwest::blocking::Client,
-    penalty_until: Option<Instant>,
+    penalty_until: Option<SystemTime>,
     seed: i64,
 }
 
 #[derive(Deserialize)]
 struct UserInfoResponse {
     #[serde(rename = "penaltyUntil")]
-    penalty_until: i64,
+    penalty_until_ms: i64,
     #[serde(rename = "serverTime")]
     server_time: i64,
     seed: i64,
@@ -194,7 +196,7 @@ impl EcClient {
             base_url: String::from(base_url),
             base_cdn_url: String::from(base_cdn_url),
             client,
-            penalty_until: None,
+            penalty_until: UNIX_EPOCH.checked_add(Duration::from_millis(me.penalty_until_ms as u64)),
             seed: me.seed,
         })
     }
