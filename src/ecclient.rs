@@ -76,7 +76,16 @@ pub enum Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "error") // TODO
+        match *self {
+            Self::HttpError(ref e) => write!(f, "an HTTP request to EC has failed: {}", e),
+            Self::FromHexError(ref e) => write!(f, "failed to convert hex-encoded value: {}", e),
+            Self::FromUtf8Error(ref e) => write!(f, "failed to decode UTF-8 encoded string: {}", e),
+            Self::UnpadError(ref e) => write!(f, "failed to decrypt EC content: {}", e),
+            Self::UrlParseError => write!(f, "failed to parse a URL"),
+            Self::KeyNotYetAvailable => {
+                write!(f, "puzzle for the provided key is not yet available")
+            }
+        }
     }
 }
 
