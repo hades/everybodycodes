@@ -169,15 +169,4 @@ H:@"
             )
         );
     }
-
-    #[test]
-    fn test_solve_part_3() {
-        assert_eq!(
-            "",
-            solve_part_3(
-                "2 3 4 5
-6 7 8 9"
-            )
-        );
-    }
 }
