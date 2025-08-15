@@ -1,3 +1,4 @@
+mod autosubmit;
 mod ecclient;
 mod quest1;
 mod quest2;
@@ -6,12 +7,15 @@ mod quest4;
 mod quest5;
 mod quest6;
 mod quest7;
+mod quest8;
 mod types;
 
 use std::env;
 use std::thread;
 
+use autosubmit::submit_with_cache;
 use clap::Parser;
+use pretty_duration::pretty_duration;
 use types::Part;
 use types::PuzzleKey;
 
@@ -136,6 +140,21 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
             quest: 7,
             part: Part::Three,
         } => Box::new(quest7::solve_part_3),
+        PuzzleKey {
+            event: 2024,
+            quest: 8,
+            part: Part::One,
+        } => Box::new(quest8::solve_part_1),
+        PuzzleKey {
+            event: 2024,
+            quest: 8,
+            part: Part::Two,
+        } => Box::new(quest8::solve_part_2),
+        PuzzleKey {
+            event: 2024,
+            quest: 8,
+            part: Part::Three,
+        } => Box::new(quest8::solve_part_3),
         _ => panic!("solver not found for {:?}", puzzle_key),
     }
 }
@@ -187,8 +206,45 @@ fn main() {
                         thread::sleep(delay);
                     }
                     log::info!("submitting the answer...");
-                    let result = client.post_answer(&key, solution.as_str());
-                    log::info!("result: {:#?}", result);
+                    let result = submit_with_cache(&key, solution.as_str(), |key, answer| {
+                        client.post_answer(key, answer).unwrap()
+                    });
+                    if result.is_answer_correct.unwrap() {
+                        log::info!("the answer is correct!");
+                        if let Some(details) = result.details {
+                            log::info!(
+                                "time since event start: {}",
+                                pretty_duration(&details.global_time, None)
+                            );
+                            log::info!(
+                                "time since quest opened: {}",
+                                pretty_duration(&details.local_time, None)
+                            );
+                            log::info!(
+                                "global score {} (rank {})",
+                                details.global_score,
+                                details.global_place
+                            );
+                        }
+                    } else {
+                        log::info!("the answer was NOT correct, try harder");
+                        log::info!(
+                            "the first letter of the answer was {}",
+                            if result.is_first_character_correct.unwrap() {
+                                "correct"
+                            } else {
+                                "not correct"
+                            }
+                        );
+                        log::info!(
+                            "the answer length was {}",
+                            if result.is_length_correct.unwrap() {
+                                "correct"
+                            } else {
+                                "not correct"
+                            }
+                        );
+                    }
                 }
             }
         }

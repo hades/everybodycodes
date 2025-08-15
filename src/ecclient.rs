@@ -174,23 +174,23 @@ struct AnswerRequest {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct AnswerResponse {
-    correct: bool,
+    pub correct: bool,
     #[serde(rename = "lengthCorrect")]
-    length_correct: bool,
+    pub length_correct: bool,
     #[serde(rename = "firstCorrect")]
-    first_correct: bool,
+    pub first_correct: bool,
     #[serde(with = "serde_millis")]
-    time: SystemTime,
+    pub time: SystemTime,
     #[serde(rename = "localTime")]
     #[serde(with = "serde_millis")]
-    local_time: Duration,
+    pub local_time: Duration,
     #[serde(rename = "globalTime")]
     #[serde(with = "serde_millis")]
-    global_time: Duration,
+    pub global_time: Duration,
     #[serde(rename = "globalPlace")]
-    global_place: i32,
+    pub global_place: i32,
     #[serde(rename = "globalScore")]
-    global_score: i32,
+    pub global_score: i32,
 }
 
 fn get_me(base_url: &str, client: &Client) -> Result<UserInfoResponse, Error> {
