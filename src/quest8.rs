@@ -23,7 +23,7 @@ fn solve_part_2_with_params(input: &str, acolytes: i64, blocks_available: i64) -
         }
         blocks_remaining -= blocks_for_layer_needed;
         last_layer_thickness = thickness;
-    } 
+    }
 }
 
 pub fn solve_part_2(input: &str) -> String {
@@ -42,8 +42,15 @@ fn solve_part_3_with_params(input: &str, acolytes: i64, blocks_available: i64) -
         column_heights.iter_mut().for_each(|i| *i += thickness);
         let mut blocks_needed = 0;
         for (i, height) in column_heights.iter().enumerate() {
-            let maximum_removable = if i == column_heights.len() - 1 { 0 } else { column_heights[i+1] - 1 };
-            let blocks_removed = cmp::min(maximum_removable, (((priests * height) % acolytes) * width) % acolytes);
+            let maximum_removable = if i == column_heights.len() - 1 {
+                0
+            } else {
+                column_heights[i + 1] - 1
+            };
+            let blocks_removed = cmp::min(
+                maximum_removable,
+                (((priests * height) % acolytes) * width) % acolytes,
+            );
             if i > 0 {
                 blocks_needed += 2 * (height - blocks_removed);
             } else {
@@ -51,10 +58,10 @@ fn solve_part_3_with_params(input: &str, acolytes: i64, blocks_available: i64) -
             }
         }
         if blocks_needed > blocks_available {
-            return (blocks_needed - blocks_available).to_string()
+            return (blocks_needed - blocks_available).to_string();
         }
         last_layer_thickness = thickness;
-    } 
+    }
 }
 
 pub fn solve_part_3(input: &str) -> String {

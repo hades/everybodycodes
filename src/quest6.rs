@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 use petgraph::{
-    visit::{depth_first_search, Control, DfsEvent::TreeEdge}, Graph
+    Graph,
+    visit::{Control, DfsEvent::TreeEdge, depth_first_search},
 };
 
 pub fn solve_part_1(input: &str) -> String {
@@ -103,7 +104,11 @@ pub fn solve_part_2(input: &str) -> String {
                 prune = true;
             }
         }
-        if prune { Control::<()>::Prune } else { Control::Continue }
+        if prune {
+            Control::<()>::Prune
+        } else {
+            Control::Continue
+        }
     });
     let unique_len = node_paths
         .iter()
