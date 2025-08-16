@@ -86,7 +86,7 @@ impl fmt::Display for Error {
             Self::UnpadError(ref e) => write!(f, "failed to decrypt EC content: {}", e),
             Self::UrlParseError => write!(f, "failed to parse a URL"),
             Self::KeyNotYetAvailable => write!(f, "puzzle for the provided key is not yet available"),
-            Self::AnswerAlreadySubmitted(ref e) => write!(f, "answer already submitted"),
+            Self::AnswerAlreadySubmitted(ref e) => write!(f, "answer already submitted: {}", e),
         }
     }
 }

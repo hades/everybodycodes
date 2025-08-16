@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
 
-use log::debug;
 use serde::Deserialize;
 use serde::Serialize;
 use toml;
