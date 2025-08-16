@@ -49,6 +49,7 @@ pub struct SubmissionResult {
     pub is_first_character_correct: Option<bool>,
     pub is_length_correct: Option<bool>,
     pub details: Option<AnswerResponse>,
+    pub cached: bool,
 }
 
 fn check_submission_log(key: &PuzzleKey, answer: &str) -> SubmissionResult {
@@ -57,6 +58,7 @@ fn check_submission_log(key: &PuzzleKey, answer: &str) -> SubmissionResult {
         is_answer_correct: None,
         is_first_character_correct: None,
         is_length_correct: None,
+        cached: true,
     };
     let log = read_submission_log();
     if log.is_none() {
@@ -158,6 +160,7 @@ where
         is_first_character_correct: Some(result.first_correct),
         is_length_correct: Some(result.length_correct),
         details: Some(result),
+        cached: false,
     };
     record_submission_log(key, answer, &submission_result);
     submission_result

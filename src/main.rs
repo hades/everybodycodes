@@ -265,14 +265,17 @@ fn main() {
                 if solution.is_empty() {
                     log::warn!("refusing to submit an empty solution");
                 } else {
-                    if let Some(delay) = client.get_penalty_delay().unwrap() {
-                        log::info!("sleeping for {:?} before submitting...", &delay);
-                        thread::sleep(delay);
-                    }
-                    log::info!("submitting the answer...");
                     let result = submit_with_cache(&key, solution.as_str(), |key, answer| {
+                        if let Some(delay) = client.get_penalty_delay().unwrap() {
+                            log::info!("sleeping for {:?} before submitting...", &delay);
+                            thread::sleep(delay);
+                        }
+                        log::info!("submitting the answer to the server...");
                         client.post_answer(key, answer).unwrap()
                     });
+                    if result.cached {
+                        log::info!("submission result was provided by the cache in results.toml");
+                    }
                     if result.is_answer_correct.unwrap() {
                         log::info!("the answer is correct!");
                         if let Some(details) = result.details {
