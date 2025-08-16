@@ -85,7 +85,9 @@ impl fmt::Display for Error {
             Self::FromUtf8Error(ref e) => write!(f, "failed to decode UTF-8 encoded string: {}", e),
             Self::UnpadError(ref e) => write!(f, "failed to decrypt EC content: {}", e),
             Self::UrlParseError => write!(f, "failed to parse a URL"),
-            Self::KeyNotYetAvailable => write!(f, "puzzle for the provided key is not yet available"),
+            Self::KeyNotYetAvailable => {
+                write!(f, "puzzle for the provided key is not yet available")
+            }
             Self::AnswerAlreadySubmitted(ref e) => write!(f, "answer already submitted: {}", e),
         }
     }
@@ -287,7 +289,9 @@ impl EcClient {
         if response.status().is_success() {
             Ok(response.json()?)
         } else if response.status().as_u16() == 409 {
-            Err(Error::AnswerAlreadySubmitted(response.error_for_status().err().unwrap()))
+            Err(Error::AnswerAlreadySubmitted(
+                response.error_for_status().err().unwrap(),
+            ))
         } else {
             Err(response.error_for_status().err().unwrap().into())
         }

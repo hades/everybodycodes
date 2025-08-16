@@ -13,10 +13,17 @@ pub fn solve_part_1(input: &str) -> String {
     }
     for i in 2..6 {
         for j in 2..6 {
-            grid[(i, j)] = [0, 1, 6, 7].iter().flat_map(|check_column| {
-                let char_in_column = grid[(i, *check_column)];
-                [0, 1, 6, 7].iter().map(|check_row| grid[(*check_row, j)]).filter(move |ch| *ch == char_in_column)
-            }).exactly_one().unwrap();
+            grid[(i, j)] = [0, 1, 6, 7]
+                .iter()
+                .flat_map(|check_column| {
+                    let char_in_column = grid[(i, *check_column)];
+                    [0, 1, 6, 7]
+                        .iter()
+                        .map(|check_row| grid[(*check_row, j)])
+                        .filter(move |ch| *ch == char_in_column)
+                })
+                .exactly_one()
+                .unwrap();
         }
     }
     String::from_iter((2..6).cartesian_product(2..6).map(|(j, i)| grid[(j, i)]))
@@ -35,9 +42,13 @@ impl<'a, T> Index<(usize, usize)> for ArrayView<'a, T> {
 
     fn index(&self, (row, column): (usize, usize)) -> &Self::Output {
         if row >= self.len_i || column >= self.len_j {
-            panic!("ArrayView[] with ({}, {}) exceeds len ({}, {})", row, column, self.len_i, self.len_j);
+            panic!(
+                "ArrayView[] with ({}, {}) exceeds len ({}, {})",
+                row, column, self.len_i, self.len_j
+            );
         }
-        self.array.get(row + self.start_i, column + self.start_j)
+        self.array
+            .get(row + self.start_i, column + self.start_j)
             .expect("index out of bounds")
     }
 }
@@ -45,9 +56,13 @@ impl<'a, T> Index<(usize, usize)> for ArrayView<'a, T> {
 impl<'a, T> IndexMut<(usize, usize)> for ArrayView<'a, T> {
     fn index_mut(&mut self, (row, column): (usize, usize)) -> &mut T {
         if row >= self.len_i || column >= self.len_j {
-            panic!("ArrayView[] with ({}, {}) exceeds len ({}, {})", row, column, self.len_i, self.len_j);
+            panic!(
+                "ArrayView[] with ({}, {}) exceeds len ({}, {})",
+                row, column, self.len_i, self.len_j
+            );
         }
-        self.array.get_mut(row + self.start_i, column + self.start_j)
+        self.array
+            .get_mut(row + self.start_i, column + self.start_j)
             .expect("index out of bounds")
     }
 }
@@ -55,10 +70,17 @@ impl<'a, T> IndexMut<(usize, usize)> for ArrayView<'a, T> {
 fn find_runic_word(grid: &mut ArrayView<char>) -> String {
     for i in 2..6 {
         for j in 2..6 {
-            grid[(i, j)] = [0, 1, 6, 7].iter().flat_map(|check_column| {
-                let char_in_column = grid[(i, *check_column)];
-                [0, 1, 6, 7].iter().map(|check_row| grid[(*check_row, j)]).filter(move |ch| *ch == char_in_column)
-            }).exactly_one().unwrap();
+            grid[(i, j)] = [0, 1, 6, 7]
+                .iter()
+                .flat_map(|check_column| {
+                    let char_in_column = grid[(i, *check_column)];
+                    [0, 1, 6, 7]
+                        .iter()
+                        .map(|check_row| grid[(*check_row, j)])
+                        .filter(move |ch| *ch == char_in_column)
+                })
+                .exactly_one()
+                .unwrap();
         }
     }
     String::from_iter((2..6).cartesian_product(2..6).map(|(j, i)| grid[(j, i)]))
@@ -86,7 +108,11 @@ pub fn solve_part_2(input: &str) -> String {
                 len_j: 8,
             };
             let word = find_runic_word(&mut view);
-            let power: usize = word.chars().enumerate().map(|(i, ch)| (i + 1) * (ch as usize - 'A' as usize + 1)).sum();
+            let power: usize = word
+                .chars()
+                .enumerate()
+                .map(|(i, ch)| (i + 1) * (ch as usize - 'A' as usize + 1))
+                .sum();
             debug!("{start_i}, {start_j}, {word}, {power}");
             total_power += power;
             start_j += 9;
@@ -101,8 +127,14 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
     let mut pending_coordinates: Vec<(usize, usize)> = vec![];
     for i in 2..6 {
         for j in 2..6 {
-            let row_letters: Vec<char> = [0, 1, 6, 7].iter().map(|border_j| grid[(i, *border_j)]).collect();
-            let col_letters: Vec<char> = [0, 1, 6, 7].iter().map(|border_i| grid[(*border_i, j)]).collect();
+            let row_letters: Vec<char> = [0, 1, 6, 7]
+                .iter()
+                .map(|border_j| grid[(i, *border_j)])
+                .collect();
+            let col_letters: Vec<char> = [0, 1, 6, 7]
+                .iter()
+                .map(|border_i| grid[(*border_i, j)])
+                .collect();
             let mut solution = ' ';
             for r in &row_letters {
                 for c in &col_letters {
@@ -112,7 +144,9 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
                 }
             }
             if solution == ' ' {
-                if row_letters.iter().find(|ch| **ch == '?').is_none() && col_letters.iter().find(|ch| **ch == '?').is_none() {
+                if row_letters.iter().find(|ch| **ch == '?').is_none()
+                    && col_letters.iter().find(|ch| **ch == '?').is_none()
+                {
                     return None;
                 } else {
                     pending_coordinates.push((i, j));
@@ -123,36 +157,58 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
         }
     }
     for (i, j) in pending_coordinates {
-        let row_letters: Vec<(usize, char)> = [0, 1, 6, 7].iter().map(|border_j| (*border_j, grid[(i, *border_j)])).collect();
-        let col_letters: Vec<(usize, char)> = [0, 1, 6, 7].iter().map(|border_i| (*border_i, grid[(*border_i, j)])).collect();
+        let row_letters: Vec<(usize, char)> = [0, 1, 6, 7]
+            .iter()
+            .map(|border_j| (*border_j, grid[(i, *border_j)]))
+            .collect();
+        let col_letters: Vec<(usize, char)> = [0, 1, 6, 7]
+            .iter()
+            .map(|border_i| (*border_i, grid[(*border_i, j)]))
+            .collect();
         if let Some(question_idx) = row_letters.iter().find(|ch| ch.1 == '?') {
             // Question mark is in the row
             //  **   B**
             //  **   K**
             //  ?GLWG.WL
-            //       B  
-            //       K  
-            //       M  
+            //       B
+            //       K
+            //       M
             //  **   M**
             //  **   V**
 
             // Fill the question mark with a character from the column that hasn't been used.
-            let solution = col_letters.iter().map(|p| p.1).filter(|ch| (2..6).find(|i| {
-                debug!("{} {} {} {}", *i, j, *ch, grid[(*i, j)]);
-                grid[(*i, j)] == *ch
-            }).is_none()).exactly_one().unwrap();
+            let solution = col_letters
+                .iter()
+                .map(|p| p.1)
+                .filter(|ch| {
+                    (2..6)
+                        .find(|i| {
+                            debug!("{} {} {} {}", *i, j, *ch, grid[(*i, j)]);
+                            grid[(*i, j)] == *ch
+                        })
+                        .is_none()
+                })
+                .exactly_one()
+                .unwrap();
             grid[(i, j)] = solution;
             grid[(i, question_idx.0)] = solution;
             continue;
         }
         if let Some(question_idx) = col_letters.iter().find(|ch| ch.1 == '?') {
-            let solution = row_letters.iter().map(|p| p.1).filter(|ch| (2..6).find(|j| grid[(i, *j)] == *ch).is_none()).exactly_one().unwrap();
+            let solution = row_letters
+                .iter()
+                .map(|p| p.1)
+                .filter(|ch| (2..6).find(|j| grid[(i, *j)] == *ch).is_none())
+                .exactly_one()
+                .unwrap();
             grid[(i, j)] = solution;
             grid[(question_idx.0, j)] = solution;
             continue;
         }
     }
-    Some(String::from_iter((2..6).cartesian_product(2..6).map(|(j, i)| grid[(j, i)])))
+    Some(String::from_iter(
+        (2..6).cartesian_product(2..6).map(|(j, i)| grid[(j, i)]),
+    ))
 }
 
 pub fn solve_part_3(input: &str) -> String {
@@ -177,7 +233,11 @@ pub fn solve_part_3(input: &str) -> String {
                 len_j: 8,
             };
             if let Some(word) = solve_runic_section(&mut view) {
-                let power: usize = word.chars().enumerate().map(|(i, ch)| (i + 1) * (ch as usize - 'A' as usize + 1)).sum();
+                let power: usize = word
+                    .chars()
+                    .enumerate()
+                    .map(|(i, ch)| (i + 1) * (ch as usize - 'A' as usize + 1))
+                    .sum();
                 debug!("{start_i}, {start_j}, {word}, {power}");
                 total_power += power;
             }
@@ -197,31 +257,44 @@ mod tests {
 
     #[test]
     fn test_solve_part_1() {
-        assert_eq!("PTBVRCZHFLJWGMNS", solve_part_1("**PCBS**
+        assert_eq!(
+            "PTBVRCZHFLJWGMNS",
+            solve_part_1(
+                "**PCBS**
 **RLNW**
 BV....PT
 CR....HZ
 FL....JW
 SG....MN
 **FTZV**
-**GMJH**"));
+**GMJH**"
+            )
+        );
     }
 
     #[test]
     fn test_solve_part_2() {
-        assert_eq!("1851", solve_part_2("**PCBS**
+        assert_eq!(
+            "1851",
+            solve_part_2(
+                "**PCBS**
 **RLNW**
 BV....PT
 CR....HZ
 FL....JW
 SG....MN
 **FTZV**
-**GMJH**"));
+**GMJH**"
+            )
+        );
     }
 
     #[test]
     fn test_solve_part_3() {
-        assert_eq!("3889", solve_part_3("**XFZB**DCST**
+        assert_eq!(
+            "3889",
+            solve_part_3(
+                "**XFZB**DCST**
 **LWQK**GQJH**
 ?G....WL....DQ
 BS....H?....CN
@@ -234,6 +307,8 @@ FX....DJ....HV
 ?Y....WM....?J
 TJ....YK....LP
 **XRTK**BMSP**
-**DWZN**GCJV**"));
+**DWZN**GCJV**"
+            )
+        );
     }
 }
