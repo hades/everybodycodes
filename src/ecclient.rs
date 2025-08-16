@@ -74,6 +74,7 @@ pub enum Error {
     UnpadError(UnpadError),
     UrlParseError,
     KeyNotYetAvailable,
+    AnswerAlreadySubmitted(reqwest::Error),
 }
 
 impl fmt::Display for Error {
@@ -84,9 +85,8 @@ impl fmt::Display for Error {
             Self::FromUtf8Error(ref e) => write!(f, "failed to decode UTF-8 encoded string: {}", e),
             Self::UnpadError(ref e) => write!(f, "failed to decrypt EC content: {}", e),
             Self::UrlParseError => write!(f, "failed to parse a URL"),
-            Self::KeyNotYetAvailable => {
-                write!(f, "puzzle for the provided key is not yet available")
-            }
+            Self::KeyNotYetAvailable => write!(f, "puzzle for the provided key is not yet available"),
+            Self::AnswerAlreadySubmitted(ref e) => write!(f, "answer already submitted"),
         }
     }
 }
@@ -100,6 +100,7 @@ impl error::Error for Error {
             Self::UnpadError(_) => None,
             Self::UrlParseError => None,
             Self::KeyNotYetAvailable => None,
+            Self::AnswerAlreadySubmitted(ref e) => Some(e),
         }
     }
 }
@@ -282,7 +283,14 @@ impl EcClient {
         let request = AnswerRequest {
             answer: answer.to_string(),
         };
-        Ok(self.client.post(url).json(&request).send()?.json()?)
+        let response = self.client.post(url).json(&request).send()?;
+        if response.status().is_success() {
+            Ok(response.json()?)
+        } else if response.status().as_u16() == 409 {
+            Err(Error::AnswerAlreadySubmitted(response.error_for_status().err().unwrap()))
+        } else {
+            Err(response.error_for_status().err().unwrap().into())
+        }
     }
 
     pub fn get_penalty_delay(&self) -> Result<Option<Duration>, Error> {
