@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fs;
 
+use log::debug;
 use serde::Deserialize;
 use serde::Serialize;
 use toml;
@@ -117,14 +118,18 @@ fn record_submission_log(key: &PuzzleKey, answer: &str, result: &SubmissionResul
         }
         Some(false) => {
             entry.rejected_answers.push(answer.to_string());
-            if !entry
-                .rejected_answer_lengths
-                .iter()
-                .any(|l| *l == answer.len())
-            {
-                entry.rejected_answer_lengths.push(answer.len());
+            if let Some(false) = result.is_length_correct {
+                if !entry
+                    .rejected_answer_lengths
+                    .iter()
+                    .any(|l| *l == answer.len())
+                {
+                    entry.rejected_answer_lengths.push(answer.len());
+                }
             }
-            if let Some(first_char) = answer.chars().next() {
+            if let (Some(false), Some(first_char)) =
+                (result.is_first_character_correct, answer.chars().next())
+            {
                 let first_char = String::from(first_char);
                 if !entry
                     .rejected_first_characters
