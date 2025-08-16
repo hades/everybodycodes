@@ -1,6 +1,8 @@
 mod autosubmit;
 mod ecclient;
 mod quest1;
+mod quest10;
+mod quest11;
 mod quest2;
 mod quest3;
 mod quest4;
@@ -9,7 +11,6 @@ mod quest6;
 mod quest7;
 mod quest8;
 mod quest9;
-mod quest10;
 mod types;
 
 use std::env;
@@ -187,6 +188,21 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
             quest: 10,
             part: Part::Three,
         } => Box::new(quest10::solve_part_3),
+        PuzzleKey {
+            event: 2024,
+            quest: 11,
+            part: Part::One,
+        } => Box::new(quest11::solve_part_1),
+        PuzzleKey {
+            event: 2024,
+            quest: 11,
+            part: Part::Two,
+        } => Box::new(quest11::solve_part_2),
+        PuzzleKey {
+            event: 2024,
+            quest: 11,
+            part: Part::Three,
+        } => Box::new(quest11::solve_part_3),
         _ => panic!("solver not found for {:?}", puzzle_key),
     }
 }
