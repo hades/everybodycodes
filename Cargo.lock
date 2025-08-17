@@ -467,6 +467,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_millis",
+ "sorted-vec",
  "test-log",
  "toml",
  "trie-rs",
@@ -1871,6 +1872,12 @@ dependencies = [
  "libc",
  "windows-sys 0.59.0",
 ]
+
+[[package]]
+name = "sorted-vec"
+version = "0.8.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee66d25213bcbd4feb55704c0c8eee3f95d022c693dab42d796e1b8f23666d9a"
 
 [[package]]
 name = "stable_deref_trait"

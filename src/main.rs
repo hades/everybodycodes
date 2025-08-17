@@ -5,6 +5,8 @@ mod quest10;
 mod quest11;
 mod quest12;
 mod quest13;
+mod quest14;
+mod quest15;
 mod quest2;
 mod quest3;
 mod quest4;
@@ -235,6 +237,36 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
             quest: 13,
             part: Part::Three,
         } => Box::new(quest13::solve_part_3),
+        PuzzleKey {
+            event: 2024,
+            quest: 14,
+            part: Part::One,
+        } => Box::new(quest14::solve_part_1),
+        PuzzleKey {
+            event: 2024,
+            quest: 14,
+            part: Part::Two,
+        } => Box::new(quest14::solve_part_2),
+        PuzzleKey {
+            event: 2024,
+            quest: 14,
+            part: Part::Three,
+        } => Box::new(quest14::solve_part_3),
+        PuzzleKey {
+            event: 2024,
+            quest: 15,
+            part: Part::One,
+        } => Box::new(quest15::solve_part_1),
+        PuzzleKey {
+            event: 2024,
+            quest: 15,
+            part: Part::Two,
+        } => Box::new(quest15::solve_part_2),
+        PuzzleKey {
+            event: 2024,
+            quest: 15,
+            part: Part::Three,
+        } => Box::new(quest15::solve_part_3),
         _ => panic!("solver not found for {:?}", puzzle_key),
     }
 }
