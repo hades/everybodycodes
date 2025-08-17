@@ -1,4 +1,3 @@
-use std::fmt::format;
 use std::{
     collections::{HashMap, HashSet},
     time::SystemTime,
@@ -71,30 +70,30 @@ pub fn solve_part_1(input: &str) -> String {
 macro_rules! debug_with_rate {
     ($($arg:tt)+) => {
         {
-            static mut last_report_ts: Option<SystemTime> = None;
-            static mut last_report_iter: usize = 0;
-            static mut rate_estimate: f64 = 10.;
-            static mut iter_count: usize = 0;
-            static mut next_report_at_iter: usize = 100;
+            static mut LAST_REPORT_TS: Option<SystemTime> = None;
+            static mut LAST_REPORT_ITER: usize = 0;
+            static mut RATE_ESTIMATE: f64 = 10.;
+            static mut ITER_COUNT: usize = 0;
+            static mut NEXT_REPORT_AT_ITER: usize = 100;
 
             unsafe {
                 #[allow(static_mut_refs)]
-                if last_report_ts.is_none() {
-                    last_report_ts = Some(SystemTime::now());
+                if LAST_REPORT_TS.is_none() {
+                    LAST_REPORT_TS = Some(SystemTime::now());
                 }
-                iter_count += 1;
-                if iter_count >= next_report_at_iter {
+                ITER_COUNT += 1;
+                if ITER_COUNT >= NEXT_REPORT_AT_ITER {
                     let ts = SystemTime::now();
-                    let new_rate_estimate = (rate_estimate * 2.).min(
-                        ((iter_count - last_report_iter) as f64) / ts.duration_since(last_report_ts.unwrap()).unwrap().as_secs_f64());
-                    next_report_at_iter = iter_count + (10. * new_rate_estimate + 1.) as usize;
-                    last_report_ts = Some(ts);
-                    last_report_iter = iter_count;
-                    rate_estimate = new_rate_estimate;
+                    let new_rate_estimate = (RATE_ESTIMATE * 2.).min(
+                        ((ITER_COUNT - LAST_REPORT_ITER) as f64) / ts.duration_since(LAST_REPORT_TS.unwrap()).unwrap().as_secs_f64());
+                    NEXT_REPORT_AT_ITER = ITER_COUNT + (10. * new_rate_estimate + 1.) as usize;
+                    LAST_REPORT_TS = Some(ts);
+                    LAST_REPORT_ITER = ITER_COUNT;
+                    RATE_ESTIMATE = new_rate_estimate;
                     let debug_msg = format!($($arg)+);
                     #[allow(static_mut_refs)]
                     {
-                        log::debug!("[rate=={:.2}/s iter#{}] {}", new_rate_estimate, iter_count, debug_msg);
+                        log::debug!("[rate=={:.2}/s iter#{}] {}", new_rate_estimate, ITER_COUNT, debug_msg);
                     }
                 }
             }
