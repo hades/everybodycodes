@@ -1,4 +1,7 @@
-use std::ops::{Index, IndexMut};
+use std::{
+    collections::HashSet,
+    ops::{Index, IndexMut},
+};
 
 use array2d::Array2D;
 use itertools::Itertools;
@@ -156,59 +159,73 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
             }
         }
     }
-    for (i, j) in pending_coordinates {
-        let row_letters: Vec<(usize, char)> = [0, 1, 6, 7]
-            .iter()
-            .map(|border_j| (*border_j, grid[(i, *border_j)]))
-            .collect();
-        let col_letters: Vec<(usize, char)> = [0, 1, 6, 7]
-            .iter()
-            .map(|border_i| (*border_i, grid[(*border_i, j)]))
-            .collect();
-        if let Some(question_idx) = row_letters.iter().find(|ch| ch.1 == '?') {
-            // Question mark is in the row
-            //  **   B**
-            //  **   K**
-            //  ?GLWG.WL
-            //       B
-            //       K
-            //       M
-            //  **   M**
-            //  **   V**
+    let mut continue_solving = false;
+    loop {
+        let mut new_pending_coordinates = vec![];
+        for (i, j) in pending_coordinates {
+            let row_letters: Vec<(usize, char)> = [0, 1, 6, 7]
+                .iter()
+                .map(|border_j| (*border_j, grid[(i, *border_j)]))
+                .collect();
+            let col_letters: Vec<(usize, char)> = [0, 1, 6, 7]
+                .iter()
+                .map(|border_i| (*border_i, grid[(*border_i, j)]))
+                .collect();
+            if let Some(question_idx) = row_letters.iter().find(|ch| ch.1 == '?') {
+                // Question mark is in the row
+                //  **   B**
+                //  **   K**
+                //  ?GLWG.WL
+                //       B
+                //       K
+                //       M
+                //  **   M**
+                //  **   V**
 
-            // Fill the question mark with a character from the column that hasn't been used.
-            let solution = col_letters
-                .iter()
-                .map(|p| p.1)
-                .filter(|ch| {
-                    (2..6)
-                        .find(|i| {
-                            debug!("{} {} {} {}", *i, j, *ch, grid[(*i, j)]);
-                            grid[(*i, j)] == *ch
-                        })
-                        .is_none()
-                })
-                .exactly_one()
-                .unwrap();
-            grid[(i, j)] = solution;
-            grid[(i, question_idx.0)] = solution;
-            continue;
+                // Fill the question mark with a character from the column that hasn't been used.
+                let solutions: Vec<_> = col_letters
+                    .iter()
+                    .map(|p| p.1)
+                    .filter(|ch| (2..6).find(|i| grid[(*i, j)] == *ch).is_none())
+                    .collect();
+                if solutions.len() > 1 {
+                    new_pending_coordinates.push((i, j));
+                } else {
+                    grid[(i, j)] = solutions[0];
+                    grid[(i, question_idx.0)] = solutions[0];
+                    continue_solving = true;
+                }
+                continue;
+            }
+            if let Some(question_idx) = col_letters.iter().find(|ch| ch.1 == '?') {
+                let solutions: Vec<_> = row_letters
+                    .iter()
+                    .map(|p| p.1)
+                    .filter(|ch| (2..6).find(|j| grid[(i, *j)] == *ch).is_none())
+                    .collect();
+                if solutions.len() > 1 {
+                    new_pending_coordinates.push((i, j));
+                } else {
+                    grid[(i, j)] = solutions[0];
+                    grid[(question_idx.0, j)] = solutions[0];
+                    continue_solving = true;
+                }
+                continue;
+            }
         }
-        if let Some(question_idx) = col_letters.iter().find(|ch| ch.1 == '?') {
-            let solution = row_letters
-                .iter()
-                .map(|p| p.1)
-                .filter(|ch| (2..6).find(|j| grid[(i, *j)] == *ch).is_none())
-                .exactly_one()
-                .unwrap();
-            grid[(i, j)] = solution;
-            grid[(question_idx.0, j)] = solution;
-            continue;
+        pending_coordinates = new_pending_coordinates;
+        if !continue_solving {
+            break;
         }
+        continue_solving = false;
     }
-    Some(String::from_iter(
-        (2..6).cartesian_product(2..6).map(|(j, i)| grid[(j, i)]),
-    ))
+    if pending_coordinates.len() > 0 {
+        None
+    } else {
+        Some(String::from_iter(
+            (2..6).cartesian_product(2..6).map(|(j, i)| grid[(j, i)]),
+        ))
+    }
 }
 
 pub fn solve_part_3(input: &str) -> String {
@@ -220,31 +237,45 @@ pub fn solve_part_3(input: &str) -> String {
             grid[(i, j)] = ch;
         }
     }
-    let mut start_i = 0;
-    let mut start_j = 0;
     let mut total_power = 0;
-    while (start_i + 7) < map_height {
-        while (start_j + 7) < map_width {
-            let mut view = ArrayView {
-                array: &mut grid,
-                start_i,
-                start_j,
-                len_i: 8,
-                len_j: 8,
-            };
-            if let Some(word) = solve_runic_section(&mut view) {
-                let power: usize = word
-                    .chars()
-                    .enumerate()
-                    .map(|(i, ch)| (i + 1) * (ch as usize - 'A' as usize + 1))
-                    .sum();
-                debug!("{start_i}, {start_j}, {word}, {power}");
-                total_power += power;
+    let mut solved = HashSet::new();
+    let mut continue_solving = false;
+    loop {
+        let mut start_i = 0;
+        let mut start_j = 0;
+        while (start_i + 7) < map_height {
+            while (start_j + 7) < map_width {
+                if solved.contains(&(start_i, start_j)) {
+                    start_j += 6;
+                    continue;
+                }
+                let mut view = ArrayView {
+                    array: &mut grid,
+                    start_i,
+                    start_j,
+                    len_i: 8,
+                    len_j: 8,
+                };
+                if let Some(word) = solve_runic_section(&mut view) {
+                    let power: usize = word
+                        .chars()
+                        .enumerate()
+                        .map(|(i, ch)| (i + 1) * (ch as usize - 'A' as usize + 1))
+                        .sum();
+                    debug!("{start_i}, {start_j}, {word}, {power}");
+                    total_power += power;
+                    continue_solving = true;
+                    solved.insert((start_i, start_j));
+                }
+                start_j += 6;
             }
-            start_j += 6;
+            start_i += 6;
+            start_j = 0;
         }
-        start_i += 6;
-        start_j = 0;
+        if !continue_solving {
+            break;
+        }
+        continue_solving = false;
     }
     total_power.to_string()
 }
