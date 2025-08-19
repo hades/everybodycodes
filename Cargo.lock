@@ -460,6 +460,7 @@ dependencies = [
  "intervallum",
  "itertools 0.14.0",
  "log",
+ "num",
  "petgraph",
  "pretty-duration",
  "pretty_env_logger",
