@@ -461,6 +461,7 @@ dependencies = [
  "itertools 0.14.0",
  "log",
  "num",
+ "permutations",
  "petgraph",
  "pretty-duration",
  "pretty_env_logger",
@@ -1449,6 +1450,12 @@ name = "percent-encoding"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
+
+[[package]]
+name = "permutations"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6dce2abb8134920de8f39a030649cee7ff154ab1bc1834bb6c5a1577187c9df3"
 
 [[package]]
 name = "petgraph"

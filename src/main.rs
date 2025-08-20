@@ -10,7 +10,9 @@ mod quest15;
 mod quest16;
 mod quest17;
 mod quest18;
+mod quest19;
 mod quest2;
+mod quest20;
 mod quest3;
 mod quest4;
 mod quest5;
@@ -19,6 +21,7 @@ mod quest7;
 mod quest8;
 mod quest9;
 mod types;
+mod util;
 
 use std::env;
 use std::thread;
@@ -315,6 +318,36 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
             quest: 18,
             part: Part::Three,
         } => Box::new(quest18::solve_part_3),
+        PuzzleKey {
+            event: 2024,
+            quest: 19,
+            part: Part::One,
+        } => Box::new(quest19::solve_part_1),
+        PuzzleKey {
+            event: 2024,
+            quest: 19,
+            part: Part::Two,
+        } => Box::new(quest19::solve_part_2),
+        PuzzleKey {
+            event: 2024,
+            quest: 19,
+            part: Part::Three,
+        } => Box::new(quest19::solve_part_3),
+        PuzzleKey {
+            event: 2024,
+            quest: 20,
+            part: Part::One,
+        } => Box::new(quest20::solve_part_1),
+        PuzzleKey {
+            event: 2024,
+            quest: 20,
+            part: Part::Two,
+        } => Box::new(quest20::solve_part_2),
+        PuzzleKey {
+            event: 2024,
+            quest: 20,
+            part: Part::Three,
+        } => Box::new(quest20::solve_part_3),
         _ => panic!("solver not found for {:?}", puzzle_key),
     }
 }
