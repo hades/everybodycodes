@@ -1,6 +1,5 @@
 use std::{
     collections::{HashMap, HashSet},
-    time::SystemTime,
 };
 
 use itertools::Itertools;

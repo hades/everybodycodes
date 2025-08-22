@@ -2,8 +2,6 @@ use array2d::Array2D;
 use log::debug;
 use permutations::Permutation;
 
-use crate::debug_with_rate;
-
 const ROTATABLE_OFFSETS: [(isize, isize); 8] = [
     (-1, -1),
     (0, -1),
