@@ -135,8 +135,6 @@ pub fn solve_part_3(input: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     use test_log::test;
 
     #[test]

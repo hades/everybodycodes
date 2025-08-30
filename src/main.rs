@@ -46,310 +46,83 @@ struct Args {
     part: i8,
 }
 
+macro_rules! try_use_solver {
+    ($key: expr, $event: pat, $quest: pat, $part: pat, $solve_fn: path) => {
+        if matches!(
+            *$key,
+            PuzzleKey {
+                event: $event,
+                quest: $quest,
+                part: $part,
+            }
+        ) {
+            return Box::new($solve_fn);
+        }
+    };
+}
+
 fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
-    match puzzle_key {
-        PuzzleKey {
-            event: 2024,
-            quest: 1,
-            part: Part::One,
-        } => Box::new(quest1::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 1,
-            part: Part::Two,
-        } => Box::new(quest1::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 1,
-            part: Part::Three,
-        } => Box::new(quest1::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 2,
-            part: Part::One,
-        } => Box::new(quest2::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 2,
-            part: Part::Two,
-        } => Box::new(quest2::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 2,
-            part: Part::Three,
-        } => Box::new(quest2::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 3,
-            part: Part::One,
-        } => Box::new(quest3::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 3,
-            part: Part::Two,
-        } => Box::new(quest3::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 3,
-            part: Part::Three,
-        } => Box::new(quest3::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 4,
-            part: Part::One,
-        } => Box::new(quest4::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 4,
-            part: Part::Two,
-        } => Box::new(quest4::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 4,
-            part: Part::Three,
-        } => Box::new(quest4::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 5,
-            part: Part::One,
-        } => Box::new(quest5::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 5,
-            part: Part::Two,
-        } => Box::new(quest5::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 5,
-            part: Part::Three,
-        } => Box::new(quest5::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 6,
-            part: Part::One,
-        } => Box::new(quest6::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 6,
-            part: Part::Two,
-        } => Box::new(quest6::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 6,
-            part: Part::Three,
-        } => Box::new(quest6::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 7,
-            part: Part::One,
-        } => Box::new(quest7::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 7,
-            part: Part::Two,
-        } => Box::new(quest7::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 7,
-            part: Part::Three,
-        } => Box::new(quest7::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 8,
-            part: Part::One,
-        } => Box::new(quest8::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 8,
-            part: Part::Two,
-        } => Box::new(quest8::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 8,
-            part: Part::Three,
-        } => Box::new(quest8::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 9,
-            part: Part::One,
-        } => Box::new(quest9::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 9,
-            part: Part::Two,
-        } => Box::new(quest9::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 9,
-            part: Part::Three,
-        } => Box::new(quest9::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 10,
-            part: Part::One,
-        } => Box::new(quest10::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 10,
-            part: Part::Two,
-        } => Box::new(quest10::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 10,
-            part: Part::Three,
-        } => Box::new(quest10::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 11,
-            part: Part::One,
-        } => Box::new(quest11::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 11,
-            part: Part::Two,
-        } => Box::new(quest11::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 11,
-            part: Part::Three,
-        } => Box::new(quest11::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 12,
-            part: Part::One,
-        } => Box::new(quest12::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 12,
-            part: Part::Two,
-        } => Box::new(quest12::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 12,
-            part: Part::Three,
-        } => Box::new(quest12::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 13,
-            part: Part::One,
-        } => Box::new(quest13::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 13,
-            part: Part::Two,
-        } => Box::new(quest13::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 13,
-            part: Part::Three,
-        } => Box::new(quest13::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 14,
-            part: Part::One,
-        } => Box::new(quest14::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 14,
-            part: Part::Two,
-        } => Box::new(quest14::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 14,
-            part: Part::Three,
-        } => Box::new(quest14::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 15,
-            part: Part::One,
-        } => Box::new(quest15::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 15,
-            part: Part::Two,
-        } => Box::new(quest15::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 15,
-            part: Part::Three,
-        } => Box::new(quest15::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 16,
-            part: Part::One,
-        } => Box::new(quest16::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 16,
-            part: Part::Two,
-        } => Box::new(quest16::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 16,
-            part: Part::Three,
-        } => Box::new(quest16::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 17,
-            part: Part::One,
-        } => Box::new(quest17::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 17,
-            part: Part::Two,
-        } => Box::new(quest17::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 17,
-            part: Part::Three,
-        } => Box::new(quest17::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 18,
-            part: Part::One,
-        } => Box::new(quest18::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 18,
-            part: Part::Two,
-        } => Box::new(quest18::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 18,
-            part: Part::Three,
-        } => Box::new(quest18::solve_part_3),
-        PuzzleKey {
-            event: 2024,
-            quest: 19,
-            part: Part::One,
-        } => Box::new(quest19::solve_part_1),
-        PuzzleKey {
-            event: 2024,
-            quest: 19,
-            part: Part::Two,
-        } => Box::new(quest19::solve_part_2),
-        PuzzleKey {
-            event: 2024,
-            quest: 19,
-            part: Part::Three,
-        } => Box::new(quest19::solve_part_3),
-        PuzzleKey {
-            event: 1,
-            quest: 1,
-            part: Part::One,
-        } => Box::new(event1::quest1::solve_part_1),
-        PuzzleKey {
-            event: 1,
-            quest: 1,
-            part: Part::Two,
-        } => Box::new(event1::quest1::solve_part_2),
-        PuzzleKey {
-            event: 1,
-            quest: 1,
-            part: Part::Three,
-        } => Box::new(event1::quest1::solve_part_3),
-        _ => panic!("solver not found for {:?}", puzzle_key),
-    }
+    try_use_solver!(puzzle_key, 2024, 1, Part::One, quest1::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 1, Part::Two, quest1::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 1, Part::Three, quest1::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 2, Part::One, quest2::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 2, Part::Two, quest2::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 2, Part::Three, quest2::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 3, Part::One, quest3::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 3, Part::Two, quest3::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 3, Part::Three, quest3::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 4, Part::One, quest4::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 4, Part::Two, quest4::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 4, Part::Three, quest4::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 5, Part::One, quest5::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 5, Part::Two, quest5::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 5, Part::Three, quest5::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 6, Part::One, quest6::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 6, Part::Two, quest6::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 6, Part::Three, quest6::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 7, Part::One, quest7::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 7, Part::Two, quest7::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 7, Part::Three, quest7::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 8, Part::One, quest8::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 8, Part::Two, quest8::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 8, Part::Three, quest8::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 9, Part::One, quest9::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 9, Part::Two, quest9::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 9, Part::Three, quest9::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 10, Part::One, quest10::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 10, Part::Two, quest10::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 10, Part::Three, quest10::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 11, Part::One, quest11::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 11, Part::Two, quest11::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 11, Part::Three, quest11::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 12, Part::One, quest12::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 12, Part::Two, quest12::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 12, Part::Three, quest12::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 13, Part::One, quest13::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 13, Part::Two, quest13::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 13, Part::Three, quest13::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 14, Part::One, quest14::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 14, Part::Two, quest14::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 14, Part::Three, quest14::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 15, Part::One, quest15::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 15, Part::Two, quest15::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 15, Part::Three, quest15::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 16, Part::One, quest16::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 16, Part::Two, quest16::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 16, Part::Three, quest16::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 17, Part::One, quest17::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 17, Part::Two, quest17::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 17, Part::Three, quest17::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 18, Part::One, quest18::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 18, Part::Two, quest18::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 18, Part::Three, quest18::solve_part_3);
+    try_use_solver!(puzzle_key, 2024, 19, Part::One, quest19::solve_part_1);
+    try_use_solver!(puzzle_key, 2024, 19, Part::Two, quest19::solve_part_2);
+    try_use_solver!(puzzle_key, 2024, 19, Part::Three, quest19::solve_part_3);
+    try_use_solver!(puzzle_key, 1, 1, Part::One, event1::quest1::solve_part_1);
+    try_use_solver!(puzzle_key, 1, 1, Part::Two, event1::quest1::solve_part_2);
+    try_use_solver!(puzzle_key, 1, 1, Part::Three, event1::quest1::solve_part_3);
+    panic!("solver not found for {:?}", puzzle_key);
 }
 
 fn main() {
