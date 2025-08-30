@@ -5,7 +5,7 @@ use std::{
 
 use itertools::Itertools;
 use log::debug;
-use petgraph::{algo::johnson, graph::UnGraph, prelude::UnGraphMap};
+use petgraph::{algo::johnson, prelude::UnGraphMap};
 
 pub fn solve_part_1(input: &str) -> String {
     let mut channels = Vec::new();
