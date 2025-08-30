@@ -1,4 +1,4 @@
-use std::{ops::{Add, Mul, MulAssign}};
+use std::ops::{Add, Mul, MulAssign};
 
 #[macro_export]
 macro_rules! debug_with_rate {
@@ -37,10 +37,13 @@ macro_rules! debug_with_rate {
 
 /**
  * Concatenate two integer numbers as decimal strings.
- * 
+ *
  * E.g. 12 + 34 = 1234
  */
-pub fn concatenate_numbers<T: Ord + Mul<Output = T> + Add<Output = T> + MulAssign + From<u8>>(a: T, b: T) -> T {
+pub fn concatenate_numbers<T: Ord + Mul<Output = T> + Add<Output = T> + MulAssign + From<u8>>(
+    a: T,
+    b: T,
+) -> T {
     let mut factor: T = 10.into();
     while factor <= b {
         factor *= 10.into();
