@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
 
+use crate::util::concatenate_numbers;
+
 fn simulate_one_round(columns: &mut Vec<Vec<usize>>, round: usize) {
     let columns_count = columns.len();
     let clapper = columns[round % columns_count].remove(0);
@@ -42,14 +44,6 @@ pub fn solve_part_1(input: &str) -> String {
         .to_string()
 }
 
-fn merge_numbers(a: usize, b: usize) -> usize {
-    let mut factor = 10;
-    while factor <= b {
-        factor *= 10;
-    }
-    a * factor + b
-}
-
 pub fn solve_part_2(input: &str) -> String {
     let mut columns = parse_input(input);
     let mut number_counts: HashMap<usize, usize> = HashMap::new();
@@ -58,7 +52,7 @@ pub fn solve_part_2(input: &str) -> String {
         simulate_one_round(&mut columns, round);
         let number = columns
             .iter()
-            .fold(0, |res, column| merge_numbers(res, column[0]));
+            .fold(0, |res, column| concatenate_numbers(res, column[0]));
         let mut count = *number_counts.get(&number).or(Some(&0)).unwrap();
         count += 1;
         if count == 2024 {
@@ -78,7 +72,7 @@ pub fn solve_part_3(input: &str) -> String {
         simulate_one_round(&mut columns, round);
         let number = columns
             .iter()
-            .fold(0, |res, column| merge_numbers(res, column[0]));
+            .fold(0, |res, column| concatenate_numbers(res, column[0]));
         if max < number {
             max = number;
         }
