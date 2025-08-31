@@ -104,6 +104,9 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
     try_use_solver!(puzzle_key, 1, 1, Part::One, event1::quest1::solve_part_1);
     try_use_solver!(puzzle_key, 1, 1, Part::Two, event1::quest1::solve_part_2);
     try_use_solver!(puzzle_key, 1, 1, Part::Three, event1::quest1::solve_part_3);
+    try_use_solver!(puzzle_key, 1, 2, Part::One, event1::quest2::solve_part_1);
+    try_use_solver!(puzzle_key, 1, 2, Part::Two, event1::quest2::solve_part_2);
+    try_use_solver!(puzzle_key, 1, 2, Part::Three, event1::quest2::solve_part_3);
     panic!("solver not found for {:?}", puzzle_key);
 }
 
