@@ -467,6 +467,7 @@ dependencies = [
  "pretty_env_logger",
  "regex",
  "reqwest",
+ "ring-algorithm",
  "serde",
  "serde_json",
  "serde_millis",
@@ -1679,6 +1680,15 @@ dependencies = [
  "libc",
  "untrusted",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "ring-algorithm"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e7a0ad57623ce306fe34b975618445cbcf998e60ab576cc11497f51a6c97f97"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]
