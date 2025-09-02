@@ -9,6 +9,7 @@ aho-corasick = "1.1.3"
 array2d = "0.3.2"
 cbc = { version = "0.1.2", features = ["alloc"] }
 clap = { version = "4.5.45", features = ["derive"] }
+cxx = { version = "1.0.174", features = ["c++20"] }
 hex = "0.4.3"
 http = "1.3.1"
 intervallum = "1.4.4"
@@ -35,3 +36,6 @@ z3 = "0.14.2"
 httptest = "0.16.3"
 serde_json = "1.0.142"
 test-log = "0.2.18"
+
+[build-dependencies]
+cxx-build = "1.0.174"

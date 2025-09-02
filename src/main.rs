@@ -1,6 +1,7 @@
 mod autosubmit;
 mod ecclient;
 mod event1;
+mod event2;
 mod event2024;
 mod types;
 mod util;
@@ -107,6 +108,12 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
     try_use_solver!(puzzle_key, 1, 2, Part::One, event1::quest2::solve_part_1);
     try_use_solver!(puzzle_key, 1, 2, Part::Two, event1::quest2::solve_part_2);
     try_use_solver!(puzzle_key, 1, 2, Part::Three, event1::quest2::solve_part_3);
+    try_use_solver!(puzzle_key, 1, 3, Part::One, event1::quest3::solve_part_one);
+    try_use_solver!(puzzle_key, 1, 3, Part::Two, event1::quest3::solve_part_two);
+    try_use_solver!(puzzle_key, 1, 3, Part::Three, event1::quest3::solve_part_three);
+    try_use_solver!(puzzle_key, 2, 1, Part::One, event2::quest1::solve_part_1);
+    try_use_solver!(puzzle_key, 2, 1, Part::Two, event2::quest1::solve_part_2);
+    try_use_solver!(puzzle_key, 2, 1, Part::Three, event2::quest1::solve_part_3);
     panic!("solver not found for {:?}", puzzle_key);
 }
 
