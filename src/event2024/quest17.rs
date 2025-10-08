@@ -66,13 +66,15 @@ pub fn solve_part_3(input: &str) -> String {
         }
     }
     let constellation: UnGraphMap<_, _> = UnGraphMap::from_elements(min_spanning_tree(&graph));
-    let mut nodes_remaining: HashSet<_> = HashSet::from_iter(all_nodes.into_iter());
+    let mut nodes_remaining: HashSet<_> = HashSet::from_iter(all_nodes);
     let mut constellation_sizes = vec![];
     while let Some(next_starting_node) = nodes_remaining.iter().next().cloned() {
         let mut node_count = 0;
         let mut distances_sum = 0;
-        depth_first_search(&constellation, Some(next_starting_node), |event| {
-            match event {
+        depth_first_search(
+            &constellation,
+            Some(next_starting_node),
+            |event| match event {
                 petgraph::visit::DfsEvent::Discover(node, _) => {
                     nodes_remaining.remove(&node);
                     node_count += 1;
@@ -81,9 +83,8 @@ pub fn solve_part_3(input: &str) -> String {
                     distances_sum += manhattan(from_node, to_node);
                 }
                 _ => {}
-            }
-            ()
-        });
+            },
+        );
         constellation_sizes.push(node_count + distances_sum);
     }
     constellation_sizes.sort();

@@ -34,8 +34,8 @@ pub fn solve_part_1(input: &str) -> String {
         .filter(|p| (p.0 == 0 || p.0 == width - 1) || (p.1 == 0 || p.1 == height - 1))
         .exactly_one()
         .unwrap();
-    let channels: HashSet<_> = HashSet::from_iter(channels.into_iter());
-    let palm_trees: HashSet<_> = HashSet::from_iter(palm_trees.into_iter());
+    let channels: HashSet<_> = HashSet::from_iter(channels);
+    let palm_trees: HashSet<_> = HashSet::from_iter(palm_trees);
     let mut t = 0;
     let mut fill_time: HashMap<(usize, usize), isize> = HashMap::new();
     let mut front = vec![start_position];
@@ -93,8 +93,8 @@ pub fn solve_part_2(input: &str) -> String {
         .into_iter()
         .filter(|p| (p.0 == 0 || p.0 == width - 1) || (p.1 == 0 || p.1 == height - 1))
         .collect();
-    let channels: HashSet<_> = HashSet::from_iter(channels.into_iter());
-    let palm_trees: HashSet<_> = HashSet::from_iter(palm_trees.into_iter());
+    let channels: HashSet<_> = HashSet::from_iter(channels);
+    let palm_trees: HashSet<_> = HashSet::from_iter(palm_trees);
     let mut t = 0;
     let mut fill_time: HashMap<(usize, usize), isize> = HashMap::new();
     let mut front = start_positions.clone();
@@ -159,8 +159,8 @@ pub fn solve_part_3(input: &str) -> String {
     channels
         .into_iter()
         .map(|(start_x, start_y)| {
-            if palm_trees.iter().any(|p| *p == (start_x, start_y)) {
-                usize::max_value()
+            if palm_trees.contains(&(start_x, start_y)) {
+                usize::MAX
             } else {
                 palm_trees
                     .iter()

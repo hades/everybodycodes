@@ -1,10 +1,9 @@
 use std::{
     collections::{HashMap, HashSet},
-    iter::{repeat, repeat_with},
+    iter::{repeat_n, repeat_with},
 };
 
 use itertools::{Itertools, izip};
-use log::debug;
 use regex::Regex;
 
 pub fn solve_part_one(input: &str) -> String {
@@ -21,7 +20,7 @@ pub fn solve_part_one(input: &str) -> String {
         seed.push(seed_str.parse::<i64>().unwrap());
     }
     let mut pulse = seed.clone();
-    let mut face = Vec::from_iter(repeat(0usize).take(faces.len()));
+    let mut face = Vec::from_iter(repeat_n(0usize, faces.len()));
     let mut total_points = 0;
     let mut roll_count = 0;
     while total_points < 10000 {
@@ -54,10 +53,10 @@ pub fn solve_part_two(input: &str) -> String {
     }
     let racetrack: Vec<_> = racetrack.chars().map(|ch| ch as i64 - '0' as i64).collect();
     let mut pulse = seed.clone();
-    let mut face = Vec::from_iter(repeat(0usize).take(faces.len()));
+    let mut face = Vec::from_iter(repeat_n(0usize, faces.len()));
     let mut roll_count = 0;
     let mut finishing_order = vec![];
-    let mut player_positions = Vec::from_iter(repeat(0usize).take(faces.len()));
+    let mut player_positions = Vec::from_iter(repeat_n(0usize, faces.len()));
     while finishing_order.len() < faces.len() {
         roll_count += 1;
         for (player_idx, (faces, seed, current_pulse, current_face, player_position)) in izip!(
@@ -71,12 +70,12 @@ pub fn solve_part_two(input: &str) -> String {
         {
             let spin = roll_count * *current_pulse;
             *current_face = (current_face.wrapping_add_signed(spin as isize)) % faces.len();
-            if *player_position < racetrack.len() {
-                if faces[*current_face] == racetrack[*player_position] {
-                    *player_position += 1;
-                    if *player_position == racetrack.len() {
-                        finishing_order.push(player_idx + 1);
-                    }
+            if *player_position < racetrack.len()
+                && faces[*current_face] == racetrack[*player_position]
+            {
+                *player_position += 1;
+                if *player_position == racetrack.len() {
+                    finishing_order.push(player_idx + 1);
                 }
             }
             *current_pulse = (*current_pulse + spin) % *seed + 1 + roll_count + *seed;
@@ -109,13 +108,13 @@ pub fn solve_part_three(input: &str) -> String {
         }
     }
     let mut pulse = seed.clone();
-    let mut face = Vec::from_iter(repeat(0usize).take(faces.len()));
+    let mut face = Vec::from_iter(repeat_n(0usize, faces.len()));
     let mut roll_count = 0;
     let mut is_first_iteration = true;
-    let mut front = Vec::from_iter(repeat_with(|| HashSet::new()).take(faces.len()));
+    let mut front = Vec::from_iter(repeat_with(HashSet::new).take(faces.len()));
     let mut accessible_spaces = HashSet::new();
     while is_first_iteration || front.iter().map(|f| f.len()).sum::<usize>() > 0 {
-        let mut next_front = Vec::from_iter(repeat_with(|| HashSet::new()).take(faces.len()));
+        let mut next_front = Vec::from_iter(repeat_with(HashSet::new).take(faces.len()));
         roll_count += 1;
         for (player_idx, (faces, seed, current_pulse, current_face)) in
             izip!(faces.iter(), seed.iter(), pulse.iter_mut(), face.iter_mut()).enumerate()

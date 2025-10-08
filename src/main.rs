@@ -45,63 +45,405 @@ macro_rules! try_use_solver {
 }
 
 fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
-    try_use_solver!(puzzle_key, 2024, 1, Part::One, event2024::quest1::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 1, Part::Two, event2024::quest1::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 1, Part::Three, event2024::quest1::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 2, Part::One, event2024::quest2::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 2, Part::Two, event2024::quest2::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 2, Part::Three, event2024::quest2::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 3, Part::One, event2024::quest3::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 3, Part::Two, event2024::quest3::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 3, Part::Three, event2024::quest3::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 4, Part::One, event2024::quest4::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 4, Part::Two, event2024::quest4::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 4, Part::Three, event2024::quest4::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 5, Part::One, event2024::quest5::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 5, Part::Two, event2024::quest5::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 5, Part::Three, event2024::quest5::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 6, Part::One, event2024::quest6::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 6, Part::Two, event2024::quest6::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 6, Part::Three, event2024::quest6::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 7, Part::One, event2024::quest7::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 7, Part::Two, event2024::quest7::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 7, Part::Three, event2024::quest7::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 8, Part::One, event2024::quest8::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 8, Part::Two, event2024::quest8::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 8, Part::Three, event2024::quest8::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 9, Part::One, event2024::quest9::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 9, Part::Two, event2024::quest9::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 9, Part::Three, event2024::quest9::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 10, Part::One, event2024::quest10::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 10, Part::Two, event2024::quest10::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 10, Part::Three, event2024::quest10::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 11, Part::One, event2024::quest11::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 11, Part::Two, event2024::quest11::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 11, Part::Three, event2024::quest11::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 12, Part::One, event2024::quest12::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 12, Part::Two, event2024::quest12::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 12, Part::Three, event2024::quest12::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 13, Part::One, event2024::quest13::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 13, Part::Two, event2024::quest13::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 13, Part::Three, event2024::quest13::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 14, Part::One, event2024::quest14::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 14, Part::Two, event2024::quest14::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 14, Part::Three, event2024::quest14::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 15, Part::One, event2024::quest15::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 15, Part::Two, event2024::quest15::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 15, Part::Three, event2024::quest15::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 16, Part::One, event2024::quest16::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 16, Part::Two, event2024::quest16::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 16, Part::Three, event2024::quest16::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 17, Part::One, event2024::quest17::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 17, Part::Two, event2024::quest17::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 17, Part::Three, event2024::quest17::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 18, Part::One, event2024::quest18::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 18, Part::Two, event2024::quest18::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 18, Part::Three, event2024::quest18::solve_part_3);
-    try_use_solver!(puzzle_key, 2024, 19, Part::One, event2024::quest19::solve_part_1);
-    try_use_solver!(puzzle_key, 2024, 19, Part::Two, event2024::quest19::solve_part_2);
-    try_use_solver!(puzzle_key, 2024, 19, Part::Three, event2024::quest19::solve_part_3);
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        1,
+        Part::One,
+        event2024::quest1::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        1,
+        Part::Two,
+        event2024::quest1::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        1,
+        Part::Three,
+        event2024::quest1::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        2,
+        Part::One,
+        event2024::quest2::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        2,
+        Part::Two,
+        event2024::quest2::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        2,
+        Part::Three,
+        event2024::quest2::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        3,
+        Part::One,
+        event2024::quest3::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        3,
+        Part::Two,
+        event2024::quest3::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        3,
+        Part::Three,
+        event2024::quest3::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        4,
+        Part::One,
+        event2024::quest4::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        4,
+        Part::Two,
+        event2024::quest4::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        4,
+        Part::Three,
+        event2024::quest4::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        5,
+        Part::One,
+        event2024::quest5::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        5,
+        Part::Two,
+        event2024::quest5::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        5,
+        Part::Three,
+        event2024::quest5::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        6,
+        Part::One,
+        event2024::quest6::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        6,
+        Part::Two,
+        event2024::quest6::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        6,
+        Part::Three,
+        event2024::quest6::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        7,
+        Part::One,
+        event2024::quest7::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        7,
+        Part::Two,
+        event2024::quest7::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        7,
+        Part::Three,
+        event2024::quest7::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        8,
+        Part::One,
+        event2024::quest8::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        8,
+        Part::Two,
+        event2024::quest8::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        8,
+        Part::Three,
+        event2024::quest8::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        9,
+        Part::One,
+        event2024::quest9::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        9,
+        Part::Two,
+        event2024::quest9::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        9,
+        Part::Three,
+        event2024::quest9::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        10,
+        Part::One,
+        event2024::quest10::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        10,
+        Part::Two,
+        event2024::quest10::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        10,
+        Part::Three,
+        event2024::quest10::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        11,
+        Part::One,
+        event2024::quest11::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        11,
+        Part::Two,
+        event2024::quest11::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        11,
+        Part::Three,
+        event2024::quest11::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        12,
+        Part::One,
+        event2024::quest12::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        12,
+        Part::Two,
+        event2024::quest12::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        12,
+        Part::Three,
+        event2024::quest12::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        13,
+        Part::One,
+        event2024::quest13::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        13,
+        Part::Two,
+        event2024::quest13::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        13,
+        Part::Three,
+        event2024::quest13::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        14,
+        Part::One,
+        event2024::quest14::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        14,
+        Part::Two,
+        event2024::quest14::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        14,
+        Part::Three,
+        event2024::quest14::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        15,
+        Part::One,
+        event2024::quest15::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        15,
+        Part::Two,
+        event2024::quest15::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        15,
+        Part::Three,
+        event2024::quest15::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        16,
+        Part::One,
+        event2024::quest16::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        16,
+        Part::Two,
+        event2024::quest16::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        16,
+        Part::Three,
+        event2024::quest16::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        17,
+        Part::One,
+        event2024::quest17::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        17,
+        Part::Two,
+        event2024::quest17::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        17,
+        Part::Three,
+        event2024::quest17::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        18,
+        Part::One,
+        event2024::quest18::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        18,
+        Part::Two,
+        event2024::quest18::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        18,
+        Part::Three,
+        event2024::quest18::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        19,
+        Part::One,
+        event2024::quest19::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        19,
+        Part::Two,
+        event2024::quest19::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2024,
+        19,
+        Part::Three,
+        event2024::quest19::solve_part_3
+    );
     try_use_solver!(puzzle_key, 1, 1, Part::One, event1::quest1::solve_part_1);
     try_use_solver!(puzzle_key, 1, 1, Part::Two, event1::quest1::solve_part_2);
     try_use_solver!(puzzle_key, 1, 1, Part::Three, event1::quest1::solve_part_3);
@@ -110,7 +452,13 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
     try_use_solver!(puzzle_key, 1, 2, Part::Three, event1::quest2::solve_part_3);
     try_use_solver!(puzzle_key, 1, 3, Part::One, event1::quest3::solve_part_one);
     try_use_solver!(puzzle_key, 1, 3, Part::Two, event1::quest3::solve_part_two);
-    try_use_solver!(puzzle_key, 1, 3, Part::Three, event1::quest3::solve_part_three);
+    try_use_solver!(
+        puzzle_key,
+        1,
+        3,
+        Part::Three,
+        event1::quest3::solve_part_three
+    );
     try_use_solver!(puzzle_key, 2, 1, Part::One, event2::quest1::solve_part_1);
     try_use_solver!(puzzle_key, 2, 1, Part::Two, event2::quest1::solve_part_2);
     try_use_solver!(puzzle_key, 2, 1, Part::Three, event2::quest1::solve_part_3);
@@ -119,7 +467,13 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
     try_use_solver!(puzzle_key, 2, 2, Part::Three, event2::quest2::solve_part_3);
     try_use_solver!(puzzle_key, 2, 3, Part::One, event2::quest3::solve_part_one);
     try_use_solver!(puzzle_key, 2, 3, Part::Two, event2::quest3::solve_part_two);
-    try_use_solver!(puzzle_key, 2, 3, Part::Three, event2::quest3::solve_part_three);
+    try_use_solver!(
+        puzzle_key,
+        2,
+        3,
+        Part::Three,
+        event2::quest3::solve_part_three
+    );
     panic!("solver not found for {:?}", puzzle_key);
 }
 

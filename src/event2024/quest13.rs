@@ -30,10 +30,10 @@ fn solve_maze(
                 if visited.contains(&(ni, nj)) {
                     continue;
                 }
-                if let Some(platform_initial_z) = platform_initial_offsets.get(&(ni, nj)) {
-                    if *platform_initial_z == z {
-                        new_state_front.insert((ni, nj, z));
-                    }
+                if let Some(platform_initial_z) = platform_initial_offsets.get(&(ni, nj))
+                    && *platform_initial_z == z
+                {
+                    new_state_front.insert((ni, nj, z));
                 }
             }
             new_state_front.insert((i, j, (z + 1) % 10));
@@ -62,7 +62,7 @@ pub fn solve_part_1(input: &str) -> String {
                 '#' => {}
                 ' ' => {}
                 ch => {
-                    platform_initial_offsets.insert((i, j), ch as u8 - '0' as u8);
+                    platform_initial_offsets.insert((i, j), ch as u8 - b'0');
                 }
             }
         }
@@ -93,7 +93,7 @@ pub fn solve_part_3(input: &str) -> String {
                 '#' => {}
                 ' ' => {}
                 ch => {
-                    platform_initial_offsets.insert((i, j), ch as u8 - '0' as u8);
+                    platform_initial_offsets.insert((i, j), ch as u8 - b'0');
                 }
             }
         }

@@ -1,4 +1,4 @@
-use std::iter::repeat;
+use std::iter::repeat_n;
 
 pub fn solve_part_1(input: &str) -> String {
     let mut i = 0;
@@ -16,7 +16,7 @@ pub fn solve_part_1(input: &str) -> String {
 }
 
 pub fn solve_part_2(input: &str) -> String {
-    let mut left: Vec<_> = repeat(input).take(50).flat_map(|s| s.chars()).collect();
+    let mut left: Vec<_> = repeat_n(input, 50).flat_map(|s| s.chars()).collect();
     let right = left.clone();
     let mut left_next_balloon = 0;
     let mut right_next_balloon = 0;
@@ -38,7 +38,7 @@ pub fn solve_part_2(input: &str) -> String {
 }
 
 pub fn solve_part_3(input: &str) -> String {
-    let mut left: Vec<_> = repeat(input).take(50000).flat_map(|s| s.chars()).collect();
+    let mut left: Vec<_> = repeat_n(input, 50000).flat_map(|s| s.chars()).collect();
     let right = left.clone();
     let mut left_next_balloon = 0;
     let mut right_next_balloon = 0;

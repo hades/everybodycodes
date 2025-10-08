@@ -90,7 +90,7 @@ pub fn solve_part_2(input: &str) -> String {
         .unique()
         .collect();
     debug!("{} herb types (oof)", herb_types.len());
-    let mut best_distance = std::i32::MAX;
+    let mut best_distance = i32::MAX;
     for strategy in herb_types.iter().permutations(herb_types.len()) {
         debug_with_rate!("{strategy:?} {best_distance}");
         let (mut x, mut y) = map.start_point;
@@ -169,10 +169,10 @@ pub fn solve_part_3(input: &str) -> String {
                 let ny = y + dy;
                 if map.pathways.contains(&(nx, ny)) {
                     let mut new_state = (nx, ny, herbs_collected.clone());
-                    if let Some(new_herb) = herb_map.get(&(nx, ny)) {
-                        if herbs_collected.iter().find(|h| **h == *new_herb).is_none() {
-                            new_state.2.insert(*new_herb);
-                        }
+                    if let Some(new_herb) = herb_map.get(&(nx, ny))
+                        && !herbs_collected.iter().contains(new_herb)
+                    {
+                        new_state.2.insert(*new_herb);
                     }
                     if !visited.contains(&new_state) {
                         new_front.insert(new_state);

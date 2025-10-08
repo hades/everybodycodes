@@ -50,7 +50,7 @@ pub fn solve_part_two(input: &str) -> String {
     let m: Vec<_> = snails.iter().map(|(disc_no, _)| *disc_no).collect();
     debug!("{a:?} {m:?}");
     let n = chinese_remainder_theorem(a.as_slice(), m.as_slice()).unwrap();
-    let lcm = m.into_iter().reduce(|a, b| lcm(a, b)).unwrap();
+    let lcm = m.into_iter().reduce(lcm).unwrap();
     ((n + lcm) % lcm).to_string()
 }
 

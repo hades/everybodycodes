@@ -18,8 +18,7 @@ fn rotate(grid: &mut Array2D<char>, x: usize, y: usize, direction: char) {
         .iter()
         .map(|(dx, dy)| grid[(x.wrapping_add_signed(*dx), y.wrapping_add_signed(*dy))])
         .collect();
-    let mut idx = 0;
-    for (dx, dy) in ROTATABLE_OFFSETS {
+    for (idx, (dx, dy)) in ROTATABLE_OFFSETS.into_iter().enumerate() {
         match direction {
             'R' => {
                 grid[(x.wrapping_add_signed(dx), y.wrapping_add_signed(dy))] =
@@ -31,7 +30,6 @@ fn rotate(grid: &mut Array2D<char>, x: usize, y: usize, direction: char) {
             }
             _ => unreachable!(),
         }
-        idx += 1;
     }
 }
 
@@ -62,9 +60,8 @@ fn make_rotate_permutation(
             )
         })
         .collect();
-    let mut idx = 0;
     let mut index_vector: Vec<_> = (0..(width * height)).collect();
-    for (dx, dy) in ROTATABLE_OFFSETS {
+    for (idx, (dx, dy)) in ROTATABLE_OFFSETS.into_iter().enumerate() {
         let nx = x.wrapping_add_signed(dx);
         let ny = y.wrapping_add_signed(dy);
         match direction {
@@ -78,13 +75,12 @@ fn make_rotate_permutation(
             }
             _ => unreachable!(),
         }
-        idx += 1;
     }
     Permutation::try_from(index_vector).unwrap()
 }
 
 pub fn solve_part_1(input: &str) -> String {
-    let width = input.lines().skip(2).next().unwrap().chars().count();
+    let width = input.lines().nth(2).unwrap().chars().count();
     let height = input.lines().count() - 2;
     let mut grid = Array2D::<char>::filled_with(' ', width, height);
     for (y, line) in input.lines().skip(2).enumerate() {
@@ -121,7 +117,7 @@ pub fn solve_part_1(input: &str) -> String {
 }
 
 pub fn solve_part_2(input: &str) -> String {
-    let width = input.lines().skip(2).next().unwrap().chars().count();
+    let width = input.lines().nth(2).unwrap().chars().count();
     let height = input.lines().count() - 2;
     let mut grid = Array2D::<char>::filled_with(' ', width, height);
     for (y, line) in input.lines().skip(2).enumerate() {
@@ -161,7 +157,7 @@ pub fn solve_part_2(input: &str) -> String {
 }
 
 pub fn solve_part_3(input: &str) -> String {
-    let width = input.lines().skip(2).next().unwrap().chars().count();
+    let width = input.lines().nth(2).unwrap().chars().count();
     let height = input.lines().count() - 2;
     let mut grid = Array2D::<char>::filled_with(' ', width, height);
     for (y, line) in input.lines().skip(2).enumerate() {

@@ -58,7 +58,6 @@ fn number_of_beetles_for_brightness(stamps: &[i64], brightness: i64) -> i64 {
             ._eq(&Dynamic::from_ast(count_ast.as_ref()))),
     );
     solver.minimize(&count_func.apply(&[]));
-    debug!("{}", solver.to_string());
     match solver.check(&[]) {
         z3::SatResult::Sat => {
             debug!("{:?}", solver.get_model());
@@ -180,7 +179,6 @@ fn number_of_beetles_for_brightness_split(stamps: &[i64], brightness: i64) -> i6
             ._eq(&Dynamic::from_ast(count_ast.as_ref()))),
     );
     solver.minimize(&count_func.apply(&[]));
-    debug!("{}", solver.to_string());
     match solver.check(&[]) {
         z3::SatResult::Sat => {
             debug!("{:?}", solver.get_model());

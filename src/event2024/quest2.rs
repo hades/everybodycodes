@@ -46,7 +46,7 @@ pub fn solve_part_2(input: &str) -> String {
 }
 
 fn find_words_starting_at<F>(
-    rune_lines: &Vec<Vec<char>>,
+    rune_lines: &[Vec<char>],
     words: &Trie<char>,
     mut i: usize,
     mut j: usize,

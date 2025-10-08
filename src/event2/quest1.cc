@@ -59,7 +59,7 @@
         }
     }
     int total_winnings = 0;
-    for (int i = 0; i < instructions.size(); ++i) {
+    for (int i = 0; i < (int)instructions.size(); ++i) {
         int max_winnings = 0;
         for (int start_slot = 1; start_slot <= 13; start_slot++) {
             int x = (start_slot - 1) * 2;
@@ -101,7 +101,7 @@
     }
     int total_slots = (nails[0].size() + 1) / 2;
     std::map<std::tuple<int, int>, int> winning_per_token_per_slot;
-    for (int i = 0; i < instructions.size(); ++i) {
+    for (int i = 0; i < (int)instructions.size(); ++i) {
         for (int start_slot = 1; start_slot <= total_slots; start_slot++) {
             int x = (start_slot - 1) * 2;
             size_t y = 0;

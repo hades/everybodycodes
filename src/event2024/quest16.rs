@@ -98,7 +98,7 @@ pub fn solve_part_3(input: &str) -> String {
                 let mut positions = positions.clone();
                 shifts.iter().enumerate().for_each(|(wheel_no, shift)| {
                     positions[wheel_no] =
-                        (positions[wheel_no] as isize + *shift as isize + additional_shift)
+                        (positions[wheel_no] + *shift as isize + additional_shift)
                             % wheels[wheel_no].len() as isize;
                 });
                 let combination = positions

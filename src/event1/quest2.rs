@@ -95,7 +95,7 @@ fn as_rank_refs(tree: &Tree) -> Vec<Vec<&Node>> {
     if let Some(ref node) = tree.root {
         next_rank.push(node.as_ref());
     }
-    while next_rank.len() > 0 {
+    while !next_rank.is_empty() {
         ranks.push(next_rank.clone());
         next_rank.clear();
         for node in ranks.last().unwrap() {
@@ -107,16 +107,15 @@ fn as_rank_refs(tree: &Tree) -> Vec<Vec<&Node>> {
             }
         }
     }
-    return ranks;
+    ranks
 }
 
 fn largest_rank_symbols(tree: &Tree) -> String {
-    let rank_refs = as_rank_refs(&tree);
+    let rank_refs = as_rank_refs(tree);
     let largest_rank_size = rank_refs.iter().map(|r| r.len()).max().unwrap();
     rank_refs
         .into_iter()
-        .filter(|r| r.len() == largest_rank_size)
-        .next()
+        .find(|r| r.len() == largest_rank_size)
         .unwrap()
         .into_iter()
         .map(|node| node.symbol)

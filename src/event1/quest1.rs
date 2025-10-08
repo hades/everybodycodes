@@ -47,10 +47,7 @@ fn eni_part_2(n: i64, mut exp: i64, modulus: i64) -> i64 {
         score = remainder;
     }
     res.reverse();
-    res.into_iter()
-        .take(5)
-        .reduce(|res, remainder| concatenate_numbers(res, remainder))
-        .unwrap()
+    res.into_iter().take(5).reduce(concatenate_numbers).unwrap()
 }
 
 fn eni_part_3(n: i64, exp: i64, modulus: i64) -> i64 {
@@ -109,7 +106,7 @@ fn parse_params(input: &str) -> Vec<Params> {
 pub fn solve_part_1(input: &str) -> String {
     parse_params(input)
         .iter()
-        .map(|p| eval(&p, &mut eni))
+        .map(|p| eval(p, &mut eni))
         .max()
         .unwrap()
         .to_string()
@@ -118,7 +115,7 @@ pub fn solve_part_1(input: &str) -> String {
 pub fn solve_part_2(input: &str) -> String {
     parse_params(input)
         .iter()
-        .map(|p| eval(&p, &mut eni_part_2))
+        .map(|p| eval(p, &mut eni_part_2))
         .max()
         .unwrap()
         .to_string()
@@ -127,7 +124,7 @@ pub fn solve_part_2(input: &str) -> String {
 pub fn solve_part_3(input: &str) -> String {
     parse_params(input)
         .iter()
-        .map(|p| eval(&p, &mut eni_part_3))
+        .map(|p| eval(p, &mut eni_part_3))
         .max()
         .unwrap()
         .to_string()

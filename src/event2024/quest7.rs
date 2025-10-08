@@ -73,14 +73,11 @@ fn flatten_track(input: &str) -> String {
     let mut dir = 0;
     while chars[y][x] != 'S' {
         result.push(chars[y][x]);
-        for possible_dir in 0..4 {
+        for (possible_dir, (dx, dy)) in directions.iter().enumerate() {
             if dir != possible_dir && (dir % 2) == (possible_dir % 2) {
                 continue;
             }
-            let (nx, ny) = (
-                x as isize + directions[possible_dir].0,
-                y as isize + directions[possible_dir].1,
-            );
+            let (nx, ny) = (x as isize + dx, y as isize + dy);
             if nx < 0 || ny < 0 {
                 continue;
             }
@@ -134,7 +131,7 @@ fn count_winning_strategies(
     remaining_equals: i8,
 ) -> i64 {
     if strategy_prefix.len() >= 11 {
-        return if run_n_loops(2024, &strategy_prefix, track) > threshold {
+        return if run_n_loops(2024, strategy_prefix, track) > threshold {
             1
         } else {
             0
@@ -191,12 +188,12 @@ pub fn solve_part_3(input: &str) -> String {
 -               = = = =   +  +  ==+ = = +   =        ++    =          -
 -               = + + =   +  -  = + = = +   =        +     =          -
 --==++++==+=+++-= =-= =-+-=  =+-= =-= =--   +=++=+++==     -=+=++==+++-";
-    let track = flatten_track(&track);
+    let track = flatten_track(track);
     let enemy_strategy: Vec<char> = input[2..]
         .split(",")
         .map(|s| s.chars().next().unwrap())
         .collect();
-    let enemy_result = run_n_loops(2024, &enemy_strategy.as_slice(), track.as_str());
+    let enemy_result = run_n_loops(2024, enemy_strategy.as_slice(), track.as_str());
     let mut strategy_buffer = Vec::new();
     count_winning_strategies(track.as_str(), &mut strategy_buffer, enemy_result, 5, 3, 3)
         .to_string()

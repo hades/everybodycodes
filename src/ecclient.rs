@@ -67,6 +67,7 @@ impl reqwest::cookie::CookieStore for EcSessionCookieStore {
 }
 
 #[derive(Debug)]
+#[expect(clippy::enum_variant_names)]
 pub enum Error {
     HttpError(reqwest::Error),
     FromHexError(FromHexError),
@@ -246,7 +247,7 @@ impl EcClient {
     }
 
     pub fn get_puzzle_input(&self, key: &PuzzleKey) -> Result<String, Error> {
-        let keys = self.get_encryption_key(&key)?;
+        let keys = self.get_encryption_key(key)?;
         let aes = match key.part {
             Part::One => keys.key1,
             Part::Two => keys.key2,
@@ -266,9 +267,8 @@ impl EcClient {
             Part::Two => &response.part_two_encrypted,
             Part::Three => &response.part_three_encrypted,
         };
-        let mut buf = Vec::new();
-        buf.resize(encrypted_text.len() / 2, 0);
-        hex::decode_to_slice(&encrypted_text, buf.as_mut_slice())?;
+        let mut buf = vec![0; encrypted_text.len() / 2];
+        hex::decode_to_slice(encrypted_text, buf.as_mut_slice())?;
         let result =
             String::from_utf8(cipher.decrypt_padded_vec_mut::<Pkcs7>(buf.as_mut_slice())?)?;
         Ok(result)

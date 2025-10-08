@@ -3,7 +3,6 @@ use std::fs;
 
 use serde::Deserialize;
 use serde::Serialize;
-use toml;
 
 use crate::ecclient::AnswerResponse;
 use crate::types::PuzzleKey;
@@ -66,11 +65,7 @@ fn check_submission_log(key: &PuzzleKey, answer: &str) -> SubmissionResult {
     }
     let log = log.unwrap();
     if let Some(entry) = log.answers.get(puzzle_key_string(key).as_str()) {
-        if entry
-            .rejected_answer_lengths
-            .iter()
-            .any(|l| *l == answer.len())
-        {
+        if entry.rejected_answer_lengths.contains(&answer.len()) {
             result.is_answer_correct = Some(false);
             result.is_length_correct = Some(false);
         } else if let Some(accepted_length) = &entry.correct_answer_length {
@@ -78,11 +73,7 @@ fn check_submission_log(key: &PuzzleKey, answer: &str) -> SubmissionResult {
         }
         if let Some(first_character) = answer.chars().next() {
             let first_character = String::from(first_character);
-            if entry
-                .rejected_first_characters
-                .iter()
-                .any(|rfc| *rfc == first_character)
-            {
+            if entry.rejected_first_characters.contains(&first_character) {
                 result.is_answer_correct = Some(false);
                 result.is_first_character_correct = Some(false);
             } else if let Some(accepted_first_character) = &entry.correct_first_character {
@@ -90,7 +81,7 @@ fn check_submission_log(key: &PuzzleKey, answer: &str) -> SubmissionResult {
                     Some(*accepted_first_character == first_character);
             }
         }
-        if !result.is_answer_correct.is_none() {
+        if result.is_answer_correct.is_some() {
             return result;
         }
         if entry.rejected_answers.iter().any(|a| a == answer) {
@@ -115,28 +106,20 @@ fn record_submission_log(key: &PuzzleKey, answer: &str, result: &SubmissionResul
         Some(true) => {
             entry.accepted_answer = Some(answer.to_string());
             entry.correct_answer_length = Some(answer.len());
-            entry.correct_first_character = answer.chars().next().map(|ch| String::from(ch));
+            entry.correct_first_character = answer.chars().next().map(String::from);
         }
         Some(false) => {
             entry.rejected_answers.push(answer.to_string());
-            if let Some(false) = result.is_length_correct {
-                if !entry
-                    .rejected_answer_lengths
-                    .iter()
-                    .any(|l| *l == answer.len())
-                {
-                    entry.rejected_answer_lengths.push(answer.len());
-                }
+            if let Some(false) = result.is_length_correct
+                && !entry.rejected_answer_lengths.contains(&answer.len())
+            {
+                entry.rejected_answer_lengths.push(answer.len());
             }
             if let (Some(false), Some(first_char)) =
                 (result.is_first_character_correct, answer.chars().next())
             {
                 let first_char = String::from(first_char);
-                if !entry
-                    .rejected_first_characters
-                    .iter()
-                    .any(|ch| *ch == first_char)
-                {
+                if !entry.rejected_first_characters.contains(&first_char) {
                     entry.rejected_first_characters.push(first_char);
                 }
             }
@@ -146,15 +129,15 @@ fn record_submission_log(key: &PuzzleKey, answer: &str, result: &SubmissionResul
     write_submission_log(&log);
 }
 
-pub fn submit_with_cache<'a, F>(key: &PuzzleKey, answer: &str, submit_fn: F) -> SubmissionResult
+pub fn submit_with_cache<F>(key: &PuzzleKey, answer: &str, submit_fn: F) -> SubmissionResult
 where
     F: FnOnce(&PuzzleKey, &str) -> AnswerResponse,
 {
     let submission_log = check_submission_log(key, answer);
-    if !submission_log.is_answer_correct.is_none() {
+    if submission_log.is_answer_correct.is_some() {
         return submission_log;
     }
-    let result = submit_fn(&key, &answer);
+    let result = submit_fn(key, answer);
     let submission_result = SubmissionResult {
         is_answer_correct: Some(result.correct),
         is_first_character_correct: Some(result.first_correct),

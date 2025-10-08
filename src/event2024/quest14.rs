@@ -27,13 +27,10 @@ pub fn solve_part_1(input: &str) -> String {
     height.to_string()
 }
 
-fn make_tree(
-    input: &str,
-) -> (
-    HashSet<(isize, isize, isize)>,
-    HashSet<(isize, isize, isize)>,
-) {
-    let mut segments = HashSet::<(isize, isize, isize)>::new();
+type Coords = (isize, isize, isize);
+
+fn make_tree(input: &str) -> (HashSet<Coords>, HashSet<Coords>) {
+    let mut segments = HashSet::<Coords>::new();
     let mut leaves = HashSet::new();
     for line in input.lines() {
         let instructions: Vec<(char, i32)> = line

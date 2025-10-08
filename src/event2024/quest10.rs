@@ -147,9 +147,7 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
                 }
             }
             if solution == ' ' {
-                if row_letters.iter().find(|ch| **ch == '?').is_none()
-                    && col_letters.iter().find(|ch| **ch == '?').is_none()
-                {
+                if !row_letters.contains(&'?') && !col_letters.contains(&'?') {
                     return None;
                 } else {
                     pending_coordinates.push((i, j));
@@ -186,7 +184,7 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
                 let solutions: Vec<_> = col_letters
                     .iter()
                     .map(|p| p.1)
-                    .filter(|ch| (2..6).find(|i| grid[(*i, j)] == *ch).is_none())
+                    .filter(|ch| !(2..6).any(|i| grid[(i, j)] == *ch))
                     .collect();
                 if solutions.len() > 1 {
                     new_pending_coordinates.push((i, j));
@@ -201,7 +199,7 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
                 let solutions: Vec<_> = row_letters
                     .iter()
                     .map(|p| p.1)
-                    .filter(|ch| (2..6).find(|j| grid[(i, *j)] == *ch).is_none())
+                    .filter(|ch| !(2..6).any(|j| grid[(i, j)] == *ch))
                     .collect();
                 if solutions.len() > 1 {
                     new_pending_coordinates.push((i, j));
@@ -219,7 +217,7 @@ fn solve_runic_section(grid: &mut ArrayView<char>) -> Option<String> {
         }
         continue_solving = false;
     }
-    if pending_coordinates.len() > 0 {
+    if !pending_coordinates.is_empty() {
         None
     } else {
         Some(String::from_iter(
