@@ -31,7 +31,7 @@ toml = "0.9.5"
 trie-rs = "0.4.2"
 typenum = "1.18.0"
 url = "2.5.4"
-z3 = "0.14.2"
+z3 = "0.19.2"
 
 [dev-dependencies]
 httptest = "0.16.3"

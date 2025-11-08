@@ -1,61 +1,48 @@
 use log::debug;
 use z3::{
-    Config, Context, FuncDecl, Optimize, Sort,
+    FuncDecl, Optimize, Sort,
     ast::{Ast, Dynamic, Int},
 };
 
 fn number_of_beetles_for_brightness(stamps: &[i64], brightness: i64) -> i64 {
-    let cfg = Config::new();
-    let ctx = Context::new(&cfg);
-    let solver = Optimize::new(&ctx);
+    let solver = Optimize::new();
     let count_funcs: Vec<FuncDecl> = stamps
         .iter()
-        .map(|stamp_value| {
-            FuncDecl::new(
-                &ctx,
-                format!("stamp{}", *stamp_value),
-                &[],
-                &Sort::int(&ctx),
-            )
-        })
+        .map(|stamp_value| FuncDecl::new(format!("stamp{}", *stamp_value), &[], &Sort::int()))
         .collect();
     // S_i >= 0
     count_funcs
         .iter()
-        .for_each(|f| solver.assert(&f.apply(&[]).as_int().unwrap().ge(&Int::from_i64(&ctx, 0))));
+        .for_each(|f| solver.assert(&f.apply(&[]).as_int().unwrap().ge(Int::from_i64(0))));
     // sum = \sum S_i * V_i
-    let mut sum_ast: Box<dyn Ast> = Box::new(Int::from_i64(&ctx, 0));
+    let mut sum_ast: Box<dyn Ast> = Box::new(Int::from_i64(0));
     for (i, stamp_value) in stamps.iter().enumerate() {
         sum_ast = Box::new(
-            (count_funcs[i].apply(&[]).as_int().unwrap() * Int::from_i64(&ctx, *stamp_value))
+            (count_funcs[i].apply(&[]).as_int().unwrap() * Int::from_i64(*stamp_value))
                 + Dynamic::from_ast(sum_ast.as_ref()).as_int().unwrap(),
         );
     }
-    let sum_func = FuncDecl::new(&ctx, "sum", &[], &Sort::int(&ctx));
-    solver.assert(
-        &(sum_func
-            .apply(&[])
-            ._eq(&Dynamic::from_ast(sum_ast.as_ref()))),
-    );
+    let sum_func = FuncDecl::new("sum", &[], &Sort::int());
+    solver.assert(&(sum_func.apply(&[]).eq(Dynamic::from_ast(sum_ast.as_ref()))));
     // sum = brightness
     solver.assert(
         &(sum_func
             .apply(&[])
-            ._eq(&Dynamic::from_ast(&Int::from_i64(&ctx, brightness)))),
+            .eq(Dynamic::from_ast(&Int::from_i64(brightness)))),
     );
 
-    let mut count_ast: Box<dyn Ast> = Box::new(Int::from_i64(&ctx, 0));
+    let mut count_ast: Box<dyn Ast> = Box::new(Int::from_i64(0));
     for func in count_funcs {
         count_ast = Box::new(
             func.apply(&[]).as_int().unwrap()
                 + Dynamic::from_ast(count_ast.as_ref()).as_int().unwrap(),
         );
     }
-    let count_func = FuncDecl::new(&ctx, "count", &[], &Sort::int(&ctx));
+    let count_func = FuncDecl::new("count", &[], &Sort::int());
     solver.assert(
         &(count_func
             .apply(&[])
-            ._eq(&Dynamic::from_ast(count_ast.as_ref()))),
+            .eq(Dynamic::from_ast(count_ast.as_ref()))),
     );
     solver.minimize(&count_func.apply(&[]));
     match solver.check(&[]) {
@@ -76,90 +63,74 @@ fn number_of_beetles_for_brightness(stamps: &[i64], brightness: i64) -> i64 {
 }
 
 fn number_of_beetles_for_brightness_split(stamps: &[i64], brightness: i64) -> i64 {
-    let cfg = Config::new();
-    let ctx = Context::new(&cfg);
-    let solver = Optimize::new(&ctx);
+    let solver = Optimize::new();
     let count_funcs_left: Vec<FuncDecl> = stamps
         .iter()
-        .map(|stamp_value| {
-            FuncDecl::new(
-                &ctx,
-                format!("stamp_left{}", *stamp_value),
-                &[],
-                &Sort::int(&ctx),
-            )
-        })
+        .map(|stamp_value| FuncDecl::new(format!("stamp_left{}", *stamp_value), &[], &Sort::int()))
         .collect();
     count_funcs_left
         .iter()
-        .for_each(|f| solver.assert(&f.apply(&[]).as_int().unwrap().ge(&Int::from_i64(&ctx, 0))));
-    let mut sum_ast_left: Box<dyn Ast> = Box::new(Int::from_i64(&ctx, 0));
+        .for_each(|f| solver.assert(&f.apply(&[]).as_int().unwrap().ge(Int::from_i64(0))));
+    let mut sum_ast_left: Box<dyn Ast> = Box::new(Int::from_i64(0));
     for (i, stamp_value) in stamps.iter().enumerate() {
         sum_ast_left = Box::new(
-            (count_funcs_left[i].apply(&[]).as_int().unwrap() * Int::from_i64(&ctx, *stamp_value))
+            (count_funcs_left[i].apply(&[]).as_int().unwrap() * Int::from_i64(*stamp_value))
                 + Dynamic::from_ast(sum_ast_left.as_ref()).as_int().unwrap(),
         );
     }
-    let sum_func_left = FuncDecl::new(&ctx, "sum_left", &[], &Sort::int(&ctx));
+    let sum_func_left = FuncDecl::new("sum_left", &[], &Sort::int());
     solver.assert(
         &(sum_func_left
             .apply(&[])
-            ._eq(&Dynamic::from_ast(sum_ast_left.as_ref()))),
+            .eq(Dynamic::from_ast(sum_ast_left.as_ref()))),
     );
 
     let count_funcs_right: Vec<FuncDecl> = stamps
         .iter()
-        .map(|stamp_value| {
-            FuncDecl::new(
-                &ctx,
-                format!("stamp_right{}", *stamp_value),
-                &[],
-                &Sort::int(&ctx),
-            )
-        })
+        .map(|stamp_value| FuncDecl::new(format!("stamp_right{}", *stamp_value), &[], &Sort::int()))
         .collect();
     count_funcs_right
         .iter()
-        .for_each(|f| solver.assert(&f.apply(&[]).as_int().unwrap().ge(&Int::from_i64(&ctx, 0))));
-    let mut sum_ast_right: Box<dyn Ast> = Box::new(Int::from_i64(&ctx, 0));
+        .for_each(|f| solver.assert(&f.apply(&[]).as_int().unwrap().ge(Int::from_i64(0))));
+    let mut sum_ast_right: Box<dyn Ast> = Box::new(Int::from_i64(0));
     for (i, stamp_value) in stamps.iter().enumerate() {
         sum_ast_right = Box::new(
-            (count_funcs_right[i].apply(&[]).as_int().unwrap() * Int::from_i64(&ctx, *stamp_value))
+            (count_funcs_right[i].apply(&[]).as_int().unwrap() * Int::from_i64(*stamp_value))
                 + Dynamic::from_ast(sum_ast_right.as_ref()).as_int().unwrap(),
         );
     }
-    let sum_func_right = FuncDecl::new(&ctx, "sum_right", &[], &Sort::int(&ctx));
+    let sum_func_right = FuncDecl::new("sum_right", &[], &Sort::int());
     solver.assert(
         &(sum_func_right
             .apply(&[])
-            ._eq(&Dynamic::from_ast(sum_ast_right.as_ref()))),
+            .eq(Dynamic::from_ast(sum_ast_right.as_ref()))),
     );
 
-    let sum_func = FuncDecl::new(&ctx, "sum", &[], &Sort::int(&ctx));
+    let sum_func = FuncDecl::new("sum", &[], &Sort::int());
     solver.assert(
         &((sum_func_right.apply(&[]).as_int().unwrap()
             + sum_func_left.apply(&[]).as_int().unwrap())
-        ._eq(&sum_func.apply(&[]).as_int().unwrap())),
+        .eq(sum_func.apply(&[]).as_int().unwrap())),
     );
     solver.assert(
         &((sum_func_right.apply(&[]).as_int().unwrap()
             - sum_func_left.apply(&[]).as_int().unwrap())
-        .le(&Int::from_i64(&ctx, 100))),
+        .le(Int::from_i64(100))),
     );
     solver.assert(
         &((sum_func_left.apply(&[]).as_int().unwrap()
             - sum_func_right.apply(&[]).as_int().unwrap())
-        .le(&Int::from_i64(&ctx, 100))),
+        .le(Int::from_i64(100))),
     );
     solver.assert(
         &(sum_func
             .apply(&[])
             .as_int()
             .unwrap()
-            ._eq(&Int::from_i64(&ctx, brightness))),
+            .eq(Int::from_i64(brightness))),
     );
 
-    let mut count_ast: Box<dyn Ast> = Box::new(Int::from_i64(&ctx, 0));
+    let mut count_ast: Box<dyn Ast> = Box::new(Int::from_i64(0));
     for func in count_funcs_left {
         count_ast = Box::new(
             func.apply(&[]).as_int().unwrap()
@@ -172,11 +143,11 @@ fn number_of_beetles_for_brightness_split(stamps: &[i64], brightness: i64) -> i6
                 + Dynamic::from_ast(count_ast.as_ref()).as_int().unwrap(),
         );
     }
-    let count_func = FuncDecl::new(&ctx, "count", &[], &Sort::int(&ctx));
+    let count_func = FuncDecl::new("count", &[], &Sort::int());
     solver.assert(
         &(count_func
             .apply(&[])
-            ._eq(&Dynamic::from_ast(count_ast.as_ref()))),
+            .eq(Dynamic::from_ast(count_ast.as_ref()))),
     );
     solver.minimize(&count_func.apply(&[]));
     match solver.check(&[]) {
