@@ -3,6 +3,7 @@ mod ecclient;
 mod event1;
 mod event2;
 mod event2024;
+mod event2025;
 mod types;
 mod util;
 
@@ -473,6 +474,69 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
         3,
         Part::Three,
         event2::quest3::solve_part_three
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        1,
+        Part::One,
+        event2025::quest1::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        1,
+        Part::Two,
+        event2025::quest1::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        1,
+        Part::Three,
+        event2025::quest1::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        3,
+        Part::One,
+        event2025::quest3::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        3,
+        Part::Two,
+        event2025::quest3::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        3,
+        Part::Three,
+        event2025::quest3::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        4,
+        Part::One,
+        event2025::quest4::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        4,
+        Part::Two,
+        event2025::quest4::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        4,
+        Part::Three,
+        event2025::quest4::solve_part_3
     );
     panic!("solver not found for {:?}", puzzle_key);
 }

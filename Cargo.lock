@@ -536,6 +536,7 @@ dependencies = [
  "itertools 0.14.0",
  "log",
  "num",
+ "num-bigint",
  "permutations",
  "petgraph",
  "pretty-duration",
