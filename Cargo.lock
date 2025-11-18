@@ -525,6 +525,7 @@ dependencies = [
  "aes",
  "aho-corasick",
  "array2d",
+ "bit-set 0.8.0",
  "cbc",
  "clap",
  "cxx",

@@ -643,6 +643,69 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
         Part::Three,
         event2025::quest8::solve_part_3
     );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        9,
+        Part::One,
+        event2025::quest9::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        9,
+        Part::Two,
+        event2025::quest9::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        9,
+        Part::Three,
+        event2025::quest9::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        10,
+        Part::One,
+        event2025::quest10::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        10,
+        Part::Two,
+        event2025::quest10::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        10,
+        Part::Three,
+        event2025::quest10::solve_part_3
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        11,
+        Part::One,
+        event2025::quest11::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        11,
+        Part::Two,
+        event2025::quest11::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        11,
+        Part::Three,
+        event2025::quest11::solve_part_3
+    );
     panic!("solver not found for {:?}", puzzle_key);
 }
 
@@ -720,18 +783,18 @@ fn main() {
                         log::info!("the answer was NOT correct, try harder");
                         log::info!(
                             "the first letter of the answer was {}",
-                            if result.is_first_character_correct.unwrap() {
-                                "correct"
-                            } else {
-                                "not correct"
+                            match result.is_first_character_correct {
+                                None => "[no data]",
+                                Some(true) => "correct",
+                                Some(false) => "not correct",
                             }
                         );
                         log::info!(
                             "the answer length was {}",
-                            if result.is_length_correct.unwrap() {
-                                "correct"
-                            } else {
-                                "not correct"
+                            match result.is_length_correct {
+                                None => "[no data]",
+                                Some(true) => "correct",
+                                Some(false) => "not correct",
                             }
                         );
                     }
