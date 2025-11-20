@@ -110,18 +110,30 @@ fn record_submission_log(key: &PuzzleKey, answer: &str, result: &SubmissionResul
         }
         Some(false) => {
             entry.rejected_answers.push(answer.to_string());
-            if let Some(false) = result.is_length_correct
-                && !entry.rejected_answer_lengths.contains(&answer.len())
-            {
-                entry.rejected_answer_lengths.push(answer.len());
-            }
-            if let (Some(false), Some(first_char)) =
-                (result.is_first_character_correct, answer.chars().next())
-            {
-                let first_char = String::from(first_char);
-                if !entry.rejected_first_characters.contains(&first_char) {
-                    entry.rejected_first_characters.push(first_char);
+            match result.is_length_correct {
+                None => {}
+                Some(false) => {
+                    if !entry.rejected_answer_lengths.contains(&answer.len()) {
+                        entry.rejected_answer_lengths.push(answer.len());
+                    }
                 }
+                Some(true) => {
+                    entry.correct_answer_length = Some(answer.len());
+                }
+            }
+            match (result.is_first_character_correct, answer.chars().next()) {
+                (Some(false), Some(first_char)) => {
+                    let first_char = String::from(first_char);
+                    if !entry.rejected_first_characters.contains(&first_char) {
+                        entry.rejected_first_characters.push(first_char);
+                    }
+                }
+                (Some(true), Some(first_char)) => {
+                    let first_char = String::from(first_char);
+                    entry.correct_first_character = Some(first_char);
+                }
+                (_, None) => {}
+                (None, _) => {}
             }
         }
         _ => {}
