@@ -47,7 +47,7 @@ pub fn solve_part_2(input: &str) -> String {
             dna
         })
         .collect::<Vec<_>>();
-    let unequalities = dnas
+    let inequalities = dnas
         .iter()
         .enumerate()
         .cartesian_product(dnas.iter().enumerate())
@@ -64,8 +64,8 @@ pub fn solve_part_2(input: &str) -> String {
                     continue;
                 }
                 debug!("{child_id} {parent_a_id} {parent_b_id}");
-                if unequalities[&(child_id, parent_a_id)]
-                    .intersection(&unequalities[&(child_id, parent_b_id)])
+                if inequalities[&(child_id, parent_a_id)]
+                    .intersection(&inequalities[&(child_id, parent_b_id)])
                     .count()
                     == 0
                 {
@@ -87,7 +87,7 @@ pub fn solve_part_3(input: &str) -> String {
             dna
         })
         .collect::<Vec<_>>();
-    let unequalities = dnas
+    let inequalities = dnas
         .iter()
         .enumerate()
         .cartesian_product(dnas.iter().enumerate())
@@ -104,8 +104,8 @@ pub fn solve_part_3(input: &str) -> String {
                     continue;
                 }
                 debug!("{child_id} {parent_a_id} {parent_b_id}");
-                if unequalities[&(child_id, parent_a_id)]
-                    .intersection(&unequalities[&(child_id, parent_b_id)])
+                if inequalities[&(child_id, parent_a_id)]
+                    .intersection(&inequalities[&(child_id, parent_b_id)])
                     .count()
                     == 0
                 {
