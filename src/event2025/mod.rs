@@ -1,6 +1,9 @@
 pub mod quest1;
 pub mod quest10;
 pub mod quest11;
+pub mod quest12;
+pub mod quest13;
+pub mod quest14;
 pub mod quest2;
 pub mod quest3;
 pub mod quest4;
