@@ -31,30 +31,19 @@ struct EcSessionCookieStore {
     // Needs to be Arc<RwLock<_>> because CookieStore must implement Send and Sync
     // https://docs.rs/reqwest/latest/reqwest/cookie/trait.CookieStore.html
     cookie: Arc<RwLock<String>>,
-
-    // Predicate to determine whether the provided URL should be authenticated
-    // with the cookie.
-    should_send_cookie: Box<dyn Fn(&Url) -> bool + Sync + Send>,
 }
 
 impl EcSessionCookieStore {
-    fn new(
-        cookie: &str,
-        should_send_cookie: Box<dyn Fn(&Url) -> bool + Sync + Send>,
-    ) -> EcSessionCookieStore {
+    fn new(cookie: &str) -> EcSessionCookieStore {
         EcSessionCookieStore {
             cookie: Arc::new(cookie.to_string().into()),
-            should_send_cookie,
         }
     }
 }
 
 impl reqwest::cookie::CookieStore for EcSessionCookieStore {
     fn set_cookies(&self, _cookie_headers: &mut dyn Iterator<Item = &HeaderValue>, _url: &Url) {}
-    fn cookies(&self, url: &Url) -> Option<HeaderValue> {
-        if !self.should_send_cookie.as_ref()(url) {
-            return None;
-        }
+    fn cookies(&self, _: &Url) -> Option<HeaderValue> {
         match HeaderValue::from_str(
             format!("everybody-codes={}", self.cookie.read().unwrap()).as_str(),
         ) {
@@ -141,7 +130,6 @@ impl From<url::ParseError> for Error {
 
 pub struct EcClient {
     base_url: String,
-    base_cdn_url: String,
     client: reqwest::blocking::Client,
     seed: i64,
 }
@@ -208,18 +196,11 @@ fn get_me(base_url: &str, client: &Client) -> Result<UserInfoResponse, Error> {
 }
 
 impl EcClient {
-    pub fn new_with_base(
-        base_url: &str,
-        base_cdn_url: &str,
-        cookie: &str,
-    ) -> Result<EcClient, Error> {
-        let base_url_for_predicate = Url::parse(base_url)?;
-        let should_send_cookie =
-            Box::new(move |url: &Url| url.authority() == base_url_for_predicate.authority());
+    pub fn new_with_base(base_url: &str, cookie: &str) -> Result<EcClient, Error> {
         // We need to use an Arc here because reqwest::ClientBuilder requires an
         // Arc<C> of CookieStore:
         // https://docs.rs/reqwest/latest/reqwest/blocking/struct.ClientBuilder.html
-        let cookie_store = Arc::new(EcSessionCookieStore::new(cookie, should_send_cookie));
+        let cookie_store = Arc::new(EcSessionCookieStore::new(cookie));
         let client = reqwest::blocking::ClientBuilder::new()
             .user_agent("ec2024")
             .cookie_provider(cookie_store.clone())
@@ -228,18 +209,13 @@ impl EcClient {
         let me = get_me(base_url, &client)?;
         Ok(EcClient {
             base_url: String::from(base_url),
-            base_cdn_url: String::from(base_cdn_url),
             client,
             seed: me.seed,
         })
     }
 
     pub fn new(cookie: &str) -> Result<EcClient, Error> {
-        Self::new_with_base(
-            "https://everybody.codes/",
-            "https://everybody-codes.b-cdn.net/",
-            cookie,
-        )
+        Self::new_with_base("https://everybody.codes/", cookie)
     }
 
     fn get_encryption_key(&self, key: &PuzzleKey) -> Result<KeyResponse, Error> {
@@ -267,7 +243,7 @@ impl EcClient {
         let cipher = cbc::Decryptor::<aes::Aes256>::new(&aes_key, &aes_iv);
         let url = format!(
             "{}assets/{}/{}/input/{}.json",
-            self.base_cdn_url, key.event, key.quest, self.seed
+            self.base_url, key.event, key.quest, self.seed
         );
         trace!("getting puzzle input from: {url}");
         let response = self.client.get(url).send()?;
@@ -330,7 +306,6 @@ mod tests {
     use httptest::matchers::eq;
     use httptest::matchers::json_decoded;
     use httptest::matchers::matches;
-    use httptest::matchers::not;
     use httptest::matchers::request;
     use httptest::responders::status_code;
 
@@ -356,9 +331,7 @@ mod tests {
 
     fn make_client(server: &Server) -> EcClient {
         let base_url = server_url(&server);
-        let base_cdn_url = format!("{}{}", server_url(&server), "_cdn/");
-        EcClient::new_with_base(base_url.as_str(), base_cdn_url.as_str(), "deadbeef")
-            .expect("creating EC client")
+        EcClient::new_with_base(base_url.as_str(), "deadbeef").expect("creating EC client")
     }
 
     #[test]
@@ -392,48 +365,6 @@ mod tests {
     }
 
     #[test]
-    fn test_get_puzzle_input_does_not_authenticate_to_cdn() {
-        let server = SERVER_POOL.get_server();
-        set_base_expect(&server);
-        let m = all_of![
-            request::method("GET"),
-            request::path(matches("/api/event/2024/quest/5")),
-            request::headers(contains(("cookie", "everybody-codes=deadbeef"))),
-        ];
-        server.expect(Expectation::matching(m).respond_with(
-            status_code(200).body(r#"{"key2": "AwAwAwAwAwAwAwAwAwAwAwAwAwAwAwA="}"#),
-        ));
-        let cdn_server = SERVER_POOL.get_server();
-        let m = all_of![
-            request::method("GET"),
-            request::path(matches("/assets/2024/5/input/7.json")),
-            request::headers(not(contains(("cookie", "everybody-codes=deadbeef"))))
-        ];
-        cdn_server.expect(Expectation::matching(m).respond_with(status_code(200).body(
-            r#"{
-                "1": "2ae06416829972cd3a095a35961d7464ca637f4a671677c6176b39967ff10f38c107f7aa6cc03e6174792d9eea1ec792",
-                "2": "2ae06416829972cd3a095a35961d7464868838a10267a6f4c53f55660f9db6d02989c4df830ce94c5cedab6476f44080",
-                "3": "2ae06416829972cd3a095a35961d746471867b81e5652c50e90d0ebbdc01ad1b7b863757e385f2c6bb6c5ead02692d15"
-        }"#)));
-        let base_url = server_url(&server);
-        let base_cdn_url = server_url(&cdn_server);
-        let client = EcClient::new_with_base(base_url.as_str(), base_cdn_url.as_str(), "deadbeef")
-            .expect("creating EC client");
-        assert_eq!(
-            "Hello, I'm your input too.
-
-Wowzers.",
-            client
-                .get_puzzle_input(&PuzzleKey {
-                    event: 2024,
-                    quest: 5,
-                    part: Part::Two
-                })
-                .unwrap()
-        );
-    }
-
-    #[test]
     fn test_get_puzzle_input() {
         let server = SERVER_POOL.get_server();
         set_base_expect(&server);
@@ -447,7 +378,7 @@ Wowzers.",
         ));
         let m = all_of![
             request::method("GET"),
-            request::path(matches("/_cdn/assets/2024/5/input/7.json")),
+            request::path(matches("/assets/2024/5/input/7.json")),
         ];
         server.expect(Expectation::matching(m).respond_with(status_code(200).body(
             r#"{
