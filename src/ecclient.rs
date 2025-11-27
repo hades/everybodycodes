@@ -14,6 +14,7 @@ use aes::cipher::generic_array::GenericArray;
 use hex::FromHexError;
 use http::HeaderValue;
 use log::error;
+use log::trace;
 use reqwest::Url;
 use reqwest::blocking::Client;
 use serde::Deserialize;
@@ -199,7 +200,10 @@ pub struct AnswerResponse {
 
 fn get_me(base_url: &str, client: &Client) -> Result<UserInfoResponse, Error> {
     let url = format!("{}{}", base_url, "api/user/me");
-    let response: UserInfoResponse = client.get(url).send()?.json()?;
+    trace!("getting user information from {url}");
+    let response = client.get(url).send()?;
+    response.error_for_status_ref()?;
+    let response: UserInfoResponse = response.json()?;
     Ok(response)
 }
 
@@ -219,6 +223,7 @@ impl EcClient {
         let client = reqwest::blocking::ClientBuilder::new()
             .user_agent("ec2024")
             .cookie_provider(cookie_store.clone())
+            .connection_verbose(true)
             .build()?;
         let me = get_me(base_url, &client)?;
         Ok(EcClient {
@@ -242,7 +247,10 @@ impl EcClient {
             "{}api/event/{}/quest/{}",
             self.base_url, key.event, key.quest
         );
-        let response: KeyResponse = self.client.get(url).send()?.json()?;
+        trace!("getting encryption keys from {url}");
+        let response = self.client.get(url).send()?;
+        response.error_for_status_ref()?;
+        let response: KeyResponse = response.json()?;
         Ok(response)
     }
 
@@ -261,7 +269,10 @@ impl EcClient {
             "{}assets/{}/{}/input/{}.json",
             self.base_cdn_url, key.event, key.quest, self.seed
         );
-        let response: PuzzleInputResponse = self.client.get(url).send()?.json()?;
+        trace!("getting puzzle input from: {url}");
+        let response = self.client.get(url).send()?;
+        response.error_for_status_ref()?;
+        let response: PuzzleInputResponse = response.json()?;
         let encrypted_text = match key.part {
             Part::One => &response.part_one_encrypted,
             Part::Two => &response.part_two_encrypted,
@@ -285,6 +296,7 @@ impl EcClient {
         let request = AnswerRequest {
             answer: answer.to_string(),
         };
+        trace!("posting answer to {url}");
         let response = self.client.post(url).json(&request).send()?;
         if response.status().is_success() {
             Ok(response.json()?)
