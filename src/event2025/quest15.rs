@@ -21,7 +21,7 @@ pub fn solve_part_1(input: &str) -> String {
             dir = (dir + 1) % 4;
             dist
         } else {
-            panic!("unparseable instruction {instr}");
+            panic!("unparsable instruction {instr}");
         };
         let dist = dist.parse::<i64>().unwrap() - 1;
         let (endx, endy) = (x + dirs[dir].0 * dist, y + dirs[dir].1 * dist);
