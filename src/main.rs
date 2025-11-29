@@ -889,7 +889,7 @@ fn main() {
                         log::info!("submission result was provided by the cache in results.toml");
                     }
                     if result.is_answer_correct.unwrap() {
-                        log::info!("the answer is correct!");
+                        log::info!("✅ the answer is correct!");
                         if let Some(details) = result.details {
                             log::info!(
                                 "time since event start: {}",
@@ -906,21 +906,21 @@ fn main() {
                             );
                         }
                     } else {
-                        log::info!("the answer was NOT correct, try harder");
+                        log::info!("❌ the answer was NOT correct, try harder");
                         log::info!(
                             "the first letter of the answer was {}",
                             match result.is_first_character_correct {
                                 None => "[no data]",
-                                Some(true) => "correct",
-                                Some(false) => "not correct",
+                                Some(true) => "✅️ correct",
+                                Some(false) => "❌ not correct",
                             }
                         );
                         log::info!(
                             "the answer length was {}",
                             match result.is_length_correct {
                                 None => "[no data]",
-                                Some(true) => "correct",
-                                Some(false) => "not correct",
+                                Some(true) => "✅️ correct",
+                                Some(false) => "❌ not correct",
                             }
                         );
                     }
