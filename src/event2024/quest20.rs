@@ -2,7 +2,6 @@ use std::cmp::max;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 use array2d::Array2D;
-use log::debug;
 
 pub fn solve_part_1(input: &str) -> String {
     let width = input.lines().next().unwrap().chars().count();
@@ -135,10 +134,10 @@ fn find_best_route_to_south(
     let mut pred = HashMap::new();
     states.push_back((start_x, start_y, start_z, start_dir));
     while let Some((x, y_global, z, dir)) = states.pop_front() {
-        if let Some(previous_z) = visited_positions.get(&(x, y_global, dir)) {
-            if *previous_z >= z {
-                continue;
-            }
+        if let Some(previous_z) = visited_positions.get(&(x, y_global, dir))
+            && *previous_z >= z
+        {
+            continue;
         }
         visited_positions.insert((x, y_global, dir), z);
         max_y = max(y_global, max_y);
@@ -204,86 +203,12 @@ pub fn solve_part_3(input: &str) -> String {
             }
         }
     }
-    /*
-    let mut block_reachability = HashMap::<((usize, isize, usize), (usize, isize, usize)), isize>::new();
-    for start_x in 0..width {
-        for start_y in 0..height {
-            if grid[(start_x, start_y)] == '#' { continue; }
-            for start_dir in 0..4 {
-                let mut z = 0;
-                let mut states = vec![(start_x, start_y as isize, z, start_dir)];
-                while !states.is_empty() {
-                    let mut new_states = Vec::new();
-                    for (x, y, z, dir) in states {
-                        if let Some(previous_reached_z_at_state) = block_reachability.get(&((start_x, start_y as isize, start_dir), (x, y, dir))) {
-                            if *previous_reached_z_at_state >= z {
-                                continue;
-                            }
-                        }
-                        if y > (height as isize) { continue; }
-                        if y < -1 { continue; }
-                        for turn in -1..=1 {
-                            let new_dir = (((dir as isize) + turn + 4) % 4) as usize;
-                            let (dx, dy) = DIRECTIONS[new_dir];
-                            let ny = y + dy;
-                            if let Some(nx) = x.checked_add_signed(dx) {
-                                let ny_on_grid = (ny + height as isize) as usize % height;
-                                if nx >= width || grid[(nx, ny_on_grid)] == '#' { continue; }
-                                let new_z = match grid[(nx, ny_on_grid)] {
-                                    '+' => z + 1,
-                                    '.' => z - 1,
-                                    '-' => z - 2,
-                                    _ => unreachable!("{nx} {ny} {}", grid[(nx, ny_on_grid)]),
-                                };
-                                new_states.push((nx, ny, new_z, new_dir));
-                            }
-                        }
-                    }
-                    states = new_states;
-                }
-            }
-        }
-    }
-    let mut states: Vec<_> = (0..4).map(|dir| (start_pos.0, start_pos.1, 10000, dir)).collect();
-    while !states.is_empty() {
-        let mut next_states = HashMap::<(usize, usize), isize>::new();
-        let mut max_y_in_this_block = 0;
-        let mut y_in_this_block = 0;
-        for (x, y, z, dir) in states {
-            y_in_this_block = y;
-            for entry in block_reachability.iter() {
-                if entry.0.0 == (x, 0, dir) && *entry.1 == 0 {
-                    max_y_in_this_block = max(max_y_in_this_block, y.wrapping_add_signed(entry.0.1.1));
-                }
-            }
-            for possible_x_in_next_block in 0..width {
-                if grid[(possible_x_in_next_block, 0)] == '#' { continue; }
-                for possible_dir_in_next_block in 0..4 {
-                    let new_z = z + block_reachability[&((x, (y % height) as isize, dir), (possible_x_in_next_block, height as isize, possible_dir_in_next_block))];
-                    if new_z < 0 { continue; }
-                    if let Some(already_reached_z) = next_states.get(&(possible_x_in_next_block, possible_dir_in_next_block)) {
-                        if *already_reached_z >= new_z {
-                            continue;
-                        }
-                    }
-                    next_states.insert((possible_x_in_next_block, possible_dir_in_next_block), new_z);
-                }
-            }
-        }
-        if next_states.is_empty() {
-            return max_y_in_this_block.to_string();
-        }
-        states = next_states.into_iter().map(|((x, dir), z)| (x, y_in_this_block + height, z, dir)).collect();
-    }
-    unreachable!()
-    */
     const START_Z: usize = 384400;
     // Find a route that has a height-aligned cycle. Since we don't know at which altitude this will happen, search for
     // the altitude exponentially.
     let mut start_z = 10;
     let possible_routes_with_cycles;
     loop {
-        debug!("trying to find route from altitude {start_z}");
         let routes: Vec<_> = (0..4)
             .map(|start_dir| {
                 find_best_route_to_south(start_pos.0, start_pos.1, start_z, start_dir, &grid)
@@ -315,8 +240,6 @@ pub fn solve_part_3(input: &str) -> String {
     }
     let mut best_y = 0;
     for (route, cycle_start_idx, cycle_end_idx) in possible_routes_with_cycles {
-        debug!("{:?}", route);
-        debug!("{cycle_start_idx} {cycle_end_idx}");
         let (x_end, y_end, dir_end, z_end) = route[cycle_end_idx];
         let prefix_dz = start_z as usize - route[cycle_start_idx].3;
         let cycle_dz = route[cycle_start_idx].3 - z_end;
