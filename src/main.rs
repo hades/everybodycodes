@@ -853,6 +853,27 @@ fn get_solver(puzzle_key: &PuzzleKey) -> Box<dyn Fn(&str) -> String> {
         Part::Three,
         event2025::quest18::solve_part_3
     );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        19,
+        Part::One,
+        event2025::quest19::solve_part_1
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        19,
+        Part::Two,
+        event2025::quest19::solve_part_2
+    );
+    try_use_solver!(
+        puzzle_key,
+        2025,
+        19,
+        Part::Three,
+        event2025::quest19::solve_part_3
+    );
     panic!("solver not found for {:?}", puzzle_key);
 }
 
