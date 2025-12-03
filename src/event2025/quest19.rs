@@ -38,7 +38,7 @@ pub fn solve_part_1(input: &str) -> String {
     }
     let y = y_ranges
         .iter()
-        .flat_map(|i| (i.lower()..=i.upper()))
+        .flat_map(|i| i.lower()..=i.upper())
         .find(|y| y % 2 == x % 2)
         .unwrap();
     ((y + x) / 2).to_string()

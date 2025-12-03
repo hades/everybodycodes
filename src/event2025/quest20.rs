@@ -7,7 +7,7 @@ fn neighbours_of(i: usize, j: usize, side: usize) -> impl Iterator<Item = (usize
         (i, j.wrapping_sub(1)),
         (i, j + 1),
         (
-            if (i + j) % 2 == 0 {
+            if (i + j).is_multiple_of(2) {
                 i.wrapping_sub(1)
             } else {
                 i + 1
@@ -83,7 +83,7 @@ pub fn rotate(data: &[Vec<char>]) -> Vec<Vec<char>> {
     let side = data.len();
     for i in 0..data.len() {
         for j in i..(data[0].len() - i) {
-            if (i + j) % 2 == 0 {
+            if (i + j).is_multiple_of(2) {
                 result[i][j] = data[side - (i + j) / 2 - 1][i * 2 + side - (i + j) / 2 - 1];
             } else {
                 result[i][j] = data[side - (i + j).div_ceil(2) - 1][side - (j - i).div_ceil(2) + i];
